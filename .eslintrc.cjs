@@ -81,4 +81,8 @@ module.exports = {
       },
     },
   ],
+
+  rules: {
+    "jsx-a11y/aria-role": [2, { ignoreNonDOM: true }],
+  },
 };

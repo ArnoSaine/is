@@ -1,0 +1,8 @@
+{
+  "acme.com": {
+    "features": ["dark-mode"]
+  },
+  "example.com": {
+    "features": ["new"]
+  }
+}
