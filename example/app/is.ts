@@ -1,7 +1,7 @@
+import create from "@arnosaine/is";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { useRouteLoaderData } from "@remix-run/react";
 import configs from "configs.json";
-import create from "libs/is";
 import { serverOnly$ } from "vite-env-only";
 import { loadUser } from "~/loaders/user";
 import { loader } from "~/root";
