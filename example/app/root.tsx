@@ -14,6 +14,8 @@ import PreviewBanner from "~/components/PreviewBanner";
 import { Is, loadValues } from "~/is";
 import { loadColorScheme } from "~/loaders/colorScheme";
 import { loadUser } from "~/loaders/user";
+import { version } from "../../package.json";
+import { IsPreview } from "./isPreview";
 
 export const meta: MetaFunction = () => {
   return [{ title: "<Is>" }, { name: "description", content: "<Is>" }];
@@ -76,6 +78,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </li>
         </ul>
         {children}
+        <IsPreview>
+          <small style={{ display: "block" }}>v.{version}</small>
+        </IsPreview>
         <ScrollRestoration />
         <Scripts />
       </body>

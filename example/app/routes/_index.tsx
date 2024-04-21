@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
-import { Is } from "~/is";
 import Greeting from "~/components/Greeting";
+import { Is } from "~/is";
 
 export default function Index() {
   return (

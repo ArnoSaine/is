@@ -1,10 +1,8 @@
-import create from "@arnosaine/is";
+import { createFromLoader } from "@arnosaine/is";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useRouteLoaderData } from "@remix-run/react";
 import configs from "configs.json";
 import { serverOnly$ } from "vite-env-only";
 import { loadUser } from "~/loaders/user";
-import { loader } from "~/root";
 
 const features = ["dark-mode", "new"];
 
@@ -36,9 +34,6 @@ export const loadValues = serverOnly$(async (args: LoaderFunctionArgs) => {
   };
 })!;
 
-const { Is, useIs, loadIs } = create({
-  useValues: () => useRouteLoaderData<typeof loader>("root")!.is,
-  loadValues,
-});
+const [Is, useIs, loadIs] = createFromLoader(loadValues);
 
 export { Is, loadIs, useIs };
