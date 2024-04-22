@@ -14,7 +14,7 @@ import PreviewBanner from "~/components/PreviewBanner";
 import { Is, loadValues } from "~/is";
 import { loadColorScheme } from "~/loaders/colorScheme";
 import { loadUser } from "~/loaders/user";
-import { version } from "../../package.json";
+import { version } from "../../../package.json";
 import { IsPreview } from "./isPreview";
 
 export const meta: MetaFunction = () => {

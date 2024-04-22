@@ -1,5 +1,5 @@
 {
-  "name": "example",
+  "name": "remix-project",
   "private": true,
   "sideEffects": false,
   "type": "module",
