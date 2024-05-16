@@ -24,7 +24,9 @@
   ],
   "scripts": {
     "build": "tsc",
-    "start": "tsc --watch"
+    "build:examples": "./build-examples.sh",
+    "start": "tsc --watch",
+    "start:examples": "serve public/ --listen 3000"
   },
   "dependencies": {
     "lodash-es": "^4.17.21"

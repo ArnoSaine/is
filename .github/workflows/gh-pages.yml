@@ -1,0 +1,129 @@
+name: Build and deploy examples
+
+on:
+  push:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # strategy:
+    #   matrix:
+    #     basename:
+    #       - ""
+    #       - /preview
+    #       - /example.com
+    #       - /acme.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+
+      - name: Build Remix
+        working-directory: examples/remix-project
+        run: npm run build
+        env:
+          # BASENAME: ${{ matrix.basename }}
+          BASENAME: /is/remix-project
+      - name: Add files to /public
+        run: |
+          mkdir -p public/remix-project
+          mv examples/remix-project/build/client/* public/remix-project
+      - name: Build Remix
+        working-directory: examples/remix-project
+        run: npm run build
+        env:
+          BASENAME: /is/remix-project/preview
+      - name: Add files to /public
+        run: |
+          mkdir -p public/remix-project/preview
+          mv examples/remix-project/build/client/* public/remix-project/preview
+      - name: Build Remix
+        working-directory: examples/remix-project
+        run: npm run build
+        env:
+          BASENAME: /is/remix-project/example.com
+      - name: Add files to /public
+        run: |
+          mkdir -p public/remix-project/example.com
+          mv examples/remix-project/build/client/* public/remix-project/example.com
+      - name: Build Remix
+        working-directory: examples/remix-project
+        run: npm run build
+        env:
+          BASENAME: /is/remix-project/acme.com
+      - name: Add files to /public
+        run: |
+          mkdir -p public/remix-project/acme.com
+          mv examples/remix-project/build/client/* public/remix-project/acme.com
+
+      - name: Build Vite
+        working-directory: examples/vite-project
+        run: npm run build
+        env:
+          BASENAME: /is/vite-project
+      - name: Add files to /public
+        run: |
+          mkdir -p public/vite-project
+          mv examples/vite-project/dist/* public/vite-project
+      - name: Build Vite
+        working-directory: examples/vite-project
+        run: npm run build
+        env:
+          BASENAME: /is/vite-project/preview
+      - name: Add files to /public
+        run: |
+          mkdir -p public/vite-project/preview
+          mv examples/vite-project/dist/* public/vite-project/preview
+      - name: Build Vite
+        working-directory: examples/vite-project
+        run: npm run build
+        env:
+          BASENAME: /is/vite-project/example.com
+      - name: Add files to /public
+        run: |
+          mkdir -p public/vite-project/example.com
+          mv examples/vite-project/dist/* public/vite-project/example.com
+      - name: Build Vite
+        working-directory: examples/vite-project
+        run: npm run build
+        env:
+          BASENAME: /is/vite-project/acme.com
+      - name: Add files to /public
+        run: |
+          mkdir -p public/vite-project/acme.com
+          mv examples/vite-project/dist/* public/vite-project/acme.com
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
