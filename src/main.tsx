@@ -1,7 +1,17 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { useRouteLoaderData } from "@remix-run/react";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import {
+  ClientActionFunctionArgs,
+  ClientLoaderFunctionArgs,
+  useRouteLoaderData,
+} from "@remix-run/react";
 import { curry } from "lodash-es";
 import { ReactNode } from "react";
+
+type Args =
+  | ClientActionFunctionArgs
+  | ActionFunctionArgs
+  | ClientLoaderFunctionArgs
+  | LoaderFunctionArgs;
 
 type PickByType<T, Value> = {
   [P in keyof T as T[P] extends Value | undefined ? P : never]: T[P];
@@ -11,14 +21,14 @@ type Conditions<Values> = Partial<
   Values | Record<keyof PickByType<Values, string[]>, string>
 >;
 
-export function create<
-  Values extends {
-    [key: string]: boolean | string[];
-  }
->(
-  useValues: () => Values,
-  defaultConditions?: Conditions<Values>,
-  loadValues?: (args: LoaderFunctionArgs) => Values | Promise<Values>
+type Values<Value = unknown> = {
+  [key: string]: Value | Value[];
+};
+
+export function create<Values_ = Values>(
+  useValues: () => Values_,
+  defaultConditions?: Conditions<Values_>,
+  loadValues?: (args: Args) => Values_ | Promise<Values_>
 ) {
   function Is({
     children = null,
@@ -27,29 +37,30 @@ export function create<
   }: {
     children?: ReactNode;
     fallback?: ReactNode;
-  } & Partial<Conditions<Values>>) {
-    return useIs(conditions as Conditions<Values>) ? children : fallback;
+  } & Partial<Conditions<Values_>>) {
+    return useIs(conditions as Conditions<Values_>) ? children : fallback;
   }
 
-  function useIs(conditions?: Partial<Conditions<Values>>) {
+  function useIs(conditions?: Partial<Conditions<Values_>>) {
     return is(useValues(), conditions);
   }
 
   const loadIs =
     loadValues &&
-    async function loadIs(args: LoaderFunctionArgs) {
+    async function loadIs(args: Args) {
       return is(await loadValues(args));
     };
 
   const is = curry(
-    (values: Values, conditions: Conditions<Values> | undefined) =>
+    (values: Values_, conditions: Conditions<Values_> | undefined) =>
       Object.entries({
         ...defaultConditions,
         ...conditions,
-      } as Conditions<Values>)
+      } as Conditions<Values_>)
         .filter(([, condition]) => typeof condition !== "undefined")
         .every(([name, condition]) => {
-          const value = values[name];
+          const value = values[name as keyof typeof values];
+
           if (Array.isArray(value)) {
             if (Array.isArray(condition)) {
               return condition.every((condition) => value.includes(condition));
@@ -57,7 +68,11 @@ export function create<
             return value.includes(condition);
           }
 
-          return value === condition;
+          if (typeof value === "boolean") {
+            return value === Boolean(condition);
+          } else {
+            return value === condition;
+          }
         })
   );
 
@@ -66,16 +81,19 @@ export function create<
 
 export const createFromLoader = <
   Values extends {
-    [key: string]: boolean | string[];
+    [key: string]: undefined | boolean | string[];
   }
 >(
-  loadValues: (args: LoaderFunctionArgs) => Values | Promise<Values>,
+  loadValues: (args: Args) => Values | Promise<Values>,
   defaultConditions?: Conditions<Values>,
   routeId = "root",
   prop = "is"
-) =>
-  create(
-    () => useRouteLoaderData<any>(routeId)![prop],
+) => {
+  const [Is, useIs, loadIs] = create(
+    () => useRouteLoaderData<any>(routeId)?.[prop] ?? {},
     defaultConditions,
     loadValues
   );
+
+  return [Is, useIs, loadIs!] as const;
+};

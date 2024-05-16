@@ -10,8 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@arnosaine/is": "*",
+    "react": "19.0.0-rc-915b914b3a-20240515",
+    "react-dom": "19.0.0-rc-915b914b3a-20240515"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
