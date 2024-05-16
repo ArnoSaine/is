@@ -1,8 +1,8 @@
 import { useFetcher, useRouteLoaderData } from "@remix-run/react";
-import { loader } from "~/root";
+import { clientLoader } from "~/root";
 
 export default function DarkModeToggle() {
-  const { colorScheme } = useRouteLoaderData<typeof loader>("root") ?? {};
+  const { colorScheme } = useRouteLoaderData<typeof clientLoader>("root") ?? {};
   const fetcher = useFetcher();
 
   return (

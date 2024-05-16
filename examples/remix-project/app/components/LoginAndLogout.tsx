@@ -11,6 +11,7 @@ export default function LoginAndLogout() {
         authenticated
         fallback={
           <>
+            <p>{'Log in with username "admin" or "demo"'}</p>
             <input name="username" type="text" />
             <input name="password" type="password" />
             <button>Log in</button>

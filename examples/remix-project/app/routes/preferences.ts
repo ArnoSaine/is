@@ -1,24 +1,23 @@
-import { ActionFunctionArgs } from "@remix-run/node";
+import { ClientActionFunctionArgs } from "@remix-run/react";
 import { allowed } from "utils/response";
 import { loadIs } from "~/is";
-import { commitSession, getSession } from "~/sessions";
 
-export const action = async (args: ActionFunctionArgs) => {
+export const clientAction = async (args: ClientActionFunctionArgs) => {
   const is = await loadIs(args);
 
-  const session = await getSession(args.request.headers.get("Cookie"));
   const formData = await args.request.formData();
 
   if (formData.has("colorScheme")) {
     // Throws 403 Forbidden if the feature is not enabled
     await allowed(is({ feature: "dark-mode" }));
 
-    session.set("colorScheme", formData.get("colorScheme"));
+    const colorScheme = formData.get("colorScheme");
+    if (colorScheme) {
+      sessionStorage.setItem("colorScheme", colorScheme as string);
+    } else {
+      sessionStorage.removeItem("colorScheme");
+    }
   }
 
-  return new Response(null, {
-    headers: {
-      "Set-Cookie": await commitSession(session),
-    },
-  });
+  return null;
 };

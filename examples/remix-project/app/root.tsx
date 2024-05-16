@@ -1,5 +1,6 @@
-import { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import { MetaFunction } from "@remix-run/node";
 import {
+  ClientLoaderFunctionArgs,
   Link,
   Links,
   Meta,
@@ -14,23 +15,27 @@ import PreviewBanner from "~/components/PreviewBanner";
 import { Is, loadValues } from "~/is";
 import { loadColorScheme } from "~/loaders/colorScheme";
 import { loadUser } from "~/loaders/user";
-import { version } from "../../../package.json";
-import { IsPreview } from "./isPreview";
 
 export const meta: MetaFunction = () => {
   return [{ title: "<Is>" }, { name: "description", content: "<Is>" }];
 };
 
-export const loader = async (args: LoaderFunctionArgs) => {
+export const clientLoader = async (args: ClientLoaderFunctionArgs) => {
   return {
-    user: await loadUser(args),
-    colorScheme: await loadColorScheme(args),
+    user: loadUser(),
+    colorScheme: loadColorScheme(),
     is: await loadValues(args),
   };
 };
 
+const port = import.meta.env.MODE === "production" ? 3000 : 5173;
+
+export function HydrateFallback() {
+  return <p>Loading...</p>;
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { colorScheme } = useLoaderData<typeof loader>() ?? {};
+  const { colorScheme } = useLoaderData<typeof clientLoader>() ?? {};
 
   return (
     <html lang="en" style={{ colorScheme }}>
@@ -48,7 +53,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       >
         <h1>
           &lt;Is&gt;{" "}
-          <small style={{ color: "gray" }}>GitHub: ArnoSaine/is</small>
+          <small>
+            <a href="https://github.com/ArnoSaine/is">GitHub: ArnoSaine/is</a>
+          </small>
         </h1>
         <Is preview>
           <PreviewBanner />
@@ -57,30 +64,43 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Is feature="dark-mode">
           <DarkModeToggle />
         </Is>
+        <p>
+          Try other URLs for different modes and features:{" "}
+          <Is
+            local
+            fallback={
+              <>
+                <a href="/is/remix-project/">release</a>,{" "}
+                <a href="/is/remix-project/preview/">preview</a>,{" "}
+                <a href="/is/remix-project/example.com/">example.com</a>,{" "}
+                <a href="/is/remix-project/acme.com/">acme.com</a>
+              </>
+            }
+          >
+            <a href={`//localhost:${port}`}>release</a>,{" "}
+            <a href={`//preview.localhost:${port}`}>preview</a>,{" "}
+            <a href={`//example.com.localhost:${port}`}>example.com</a>,{" "}
+            <a href={`//acme.com.localhost:${port}`}>acme.com</a>
+          </Is>
+        </p>
         <ul>
-          <li>
-            <a href="//localhost:5173">localhost</a>,{" "}
-            <a href="//preview.localhost:5173">Preview</a>,{" "}
-            <a href="//example.com.localhost:5173">example.com</a>,{" "}
-            <a href="//acme.com.localhost:5173">acme.com</a>
-          </li>
           <li>
             <Link to="/">Home</Link>
           </li>
           <li>
             <Link to="/protected">Protected</Link>
+            <Is authenticated fallback=" ⛔️" />
           </li>
           <li>
             <Link to="/admin">Admin Panel</Link>
+            <Is role="admin" fallback=" ⛔️" />
           </li>
           <li>
             <Link to="/new-feature">New Feature</Link>
+            <Is feature="new" fallback=" ⛔️" />
           </li>
         </ul>
         {children}
-        <IsPreview>
-          <small style={{ display: "block" }}>v.{version}</small>
-        </IsPreview>
         <ScrollRestoration />
         <Scripts />
       </body>

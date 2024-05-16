@@ -1,9 +1,8 @@
-import { ActionFunctionArgs } from "@remix-run/node";
-import { commitSession, getSession } from "~/sessions";
+import { ClientActionFunctionArgs } from "@remix-run/react";
 
 const mockUsers = [
   {
-    name: "Austin",
+    name: "admin",
     roles: ["admin"],
   },
   {
@@ -11,20 +10,16 @@ const mockUsers = [
   },
 ];
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const session = await getSession(request.headers.get("Cookie"));
+export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   const formData = await request.formData();
 
   const username = formData.get("username");
 
-  session.set(
-    "user",
-    mockUsers.find((user) => user.name === username)
-  );
+  const user = mockUsers.find((user) => user.name === username);
 
-  return new Response(null, {
-    headers: {
-      "Set-Cookie": await commitSession(session),
-    },
-  });
+  if (user) {
+    sessionStorage.setItem("user", JSON.stringify(user));
+  }
+
+  return null;
 };

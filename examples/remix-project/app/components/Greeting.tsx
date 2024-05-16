@@ -1,8 +1,8 @@
 import { useRouteLoaderData } from "@remix-run/react";
-import { loader } from "~/root";
+import { clientLoader } from "~/root";
 
 export default function Greeting() {
-  const { user } = useRouteLoaderData<typeof loader>("root")!;
+  const { user } = useRouteLoaderData<typeof clientLoader>("root")!;
 
   return (
     <>

@@ -1,9 +1,9 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { loadIs } from "~/is";
+import { ClientLoaderFunctionArgs } from "@remix-run/react";
 import { allowed, authorized } from "utils/response";
+import { loadIs } from "~/is";
 
 export const authenticated = async (
-  args: LoaderFunctionArgs,
+  args: ClientLoaderFunctionArgs,
   role?: string | string[]
 ) => {
   const is = await loadIs(args);

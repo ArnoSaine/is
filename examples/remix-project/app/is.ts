@@ -1,36 +1,40 @@
 import { createFromLoader } from "@arnosaine/is";
-import { LoaderFunctionArgs } from "@remix-run/node";
-import configs from "configs.json";
-import { serverOnly$ } from "vite-env-only";
-import { loadUser } from "~/loaders/user";
+import { ClientLoaderFunctionArgs } from "@remix-run/react";
+import configs from "../configs.json";
+import { loadUser } from "./loaders/user";
 
-const features = ["dark-mode", "new"];
+type Domain = keyof typeof configs;
 
-export const loadValues = serverOnly$(async (args: LoaderFunctionArgs) => {
-  const { hostname } = new URL(args.request.url);
-
-  const domain = (
-    hostname.endsWith(".localhost")
-      ? hostname.slice(0, -".localhost".length)
-      : hostname
-  ) as keyof typeof configs;
-
-  const config = configs[domain];
-
+export const loadValues = (async (args: ClientLoaderFunctionArgs) => {
+  const { hostname, pathname } = new URL(args.request.url);
   const hostnameParts = hostname.split(".");
 
-  const user = await loadUser(args);
+  const domain = hostname.endsWith(".localhost")
+    ? // If used as <domain>.localhost, get subdomain.
+      hostname.slice(0, -".localhost".length)
+    : hostname;
 
-  const isPreview = hostnameParts.at(0) === "preview";
+  const basename = "/is/remix-project/";
+  const [deployPath] = pathname.slice(basename.length).split("/");
+  const isLocal = hostnameParts.at(-1) === "localhost";
+  const isPreview = (isLocal ? hostnameParts.at(0) : deployPath) === "preview";
+
+  const configSource = isLocal ? domain : deployPath;
+
+  const user = await loadUser();
+  const config =
+    configSource in configs ? configs[configSource as Domain] : undefined;
 
   return {
     authenticated: Boolean(user),
-    role: user?.roles,
+    feature: isPreview
+      ? // In preview mode all features are enabled.
+        // Typed as string, to accept any string as feature name.
+        (true as unknown as string)
+      : config?.features,
+    local: isLocal,
     preview: isPreview,
-    feature: isPreview ? features : config?.features,
-
-    test: hostnameParts.at(0) === "test",
-    local: hostnameParts.at(-1) === "localhost",
+    role: user?.roles,
   };
 })!;
 

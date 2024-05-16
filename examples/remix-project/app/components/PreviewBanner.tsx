@@ -1,8 +1,8 @@
 import { useRouteLoaderData } from "@remix-run/react";
-import { loader } from "~/root";
+import { clientLoader } from "~/root";
 
 export default function PreviewBanner() {
-  const { colorScheme } = useRouteLoaderData<typeof loader>("root") ?? {};
+  const { colorScheme } = useRouteLoaderData<typeof clientLoader>("root") ?? {};
 
   return (
     <div
@@ -17,7 +17,7 @@ export default function PreviewBanner() {
         background: colorScheme === "dark" ? "#bb9611" : "#eabf23",
       }}
     >
-      Preview mode
+      Preview mode (all features are enabled)
     </div>
   );
 }

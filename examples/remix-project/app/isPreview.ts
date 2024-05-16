@@ -1,8 +1,7 @@
 import { createFromLoader } from "@arnosaine/is";
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { serverOnly$ } from "vite-env-only";
+import { ClientLoaderFunctionArgs } from "@remix-run/react";
 
-const loadValues = serverOnly$(async (args: LoaderFunctionArgs) => {
+const loadValues = (async (args: ClientLoaderFunctionArgs) => {
   const { hostname } = new URL(args.request.url);
   const hostnameParts = hostname.split(".");
 
