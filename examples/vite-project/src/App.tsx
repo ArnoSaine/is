@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import { HasPermission } from "./HasPermission";
 import { useUser } from "./UserContext";
 import { Is } from "./is";
 import { IsPreview, useIsPreview } from "./isPreview";
@@ -20,7 +21,7 @@ function App() {
       </h1>
       <div className="cards">
         <div className="card">
-          <h2>Auth state & roles</h2>
+          <h2>Auth state, roles & permissions</h2>
           <Is
             authenticated
             fallback={
@@ -28,6 +29,7 @@ function App() {
                 <button
                   onClick={() =>
                     setUser({
+                      id: 123,
                       name: "demo",
                     })
                   }
@@ -37,8 +39,15 @@ function App() {
                 <button
                   onClick={() =>
                     setUser({
+                      id: 456,
                       name: "admin",
                       roles: ["admin"],
+                      permissions: [
+                        "create-articles",
+                        "read-articles",
+                        "update-articles",
+                        "delete-articles",
+                      ],
                     })
                   }
                 >
@@ -64,10 +73,13 @@ function App() {
               <em>Admin role is assigned</em>
             </Is>
           </p>
+          <Is permission="update-articles">
+            <button>Edit Article</button>
+          </Is>
         </div>
 
         <div className="card">
-          <h2>Feature flags & preview mode</h2>
+          <h2>Feature flags, preview mode & A/B testing</h2>
           <p>Try other URLs for different modes and features:</p>
           <p>
             <Is
@@ -107,6 +119,11 @@ function App() {
               [Other feature goes here]
             </Is>
           </p>
+          <p>
+            <Is feature="new-footer" fallback="[Old footer goes here]">
+              [New footer goes here]
+            </Is>
+          </p>
         </div>
 
         <div className="card">
@@ -119,6 +136,9 @@ function App() {
           <p>
             Preview mode: <code>{JSON.stringify(useIsPreview())}</code>
           </p>
+          <HasPermission update-articles>
+            <button>Edit Article</button>
+          </HasPermission>
         </div>
       </div>
     </>

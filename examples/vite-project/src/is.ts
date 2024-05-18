@@ -10,7 +10,7 @@ const { hostname, pathname } = location;
 const hostnameParts = hostname.split(".");
 
 const domain = hostname.endsWith(".localhost")
-  ? // If used as <domain>.localhost, get subdomain.
+  ? // On <domain>.localhost, get subdomain.
     hostname.slice(0, -".localhost".length)
   : hostname;
 
@@ -29,17 +29,24 @@ const configPromise = getConfig(
 
 const useValues = () => {
   const [user] = useUser()!;
-
   const config = use(configPromise);
+  let { features } = config;
+
+  // Enable new footer for some users
+  const enableNewFooter = Boolean((user?.id ?? 0) % 2);
+  if (enableNewFooter) {
+    features = [...features, "new-footer"];
+  }
 
   return {
     authenticated: Boolean(user),
     feature: isPreview
-      ? // In preview mode all features are enabled.
-        // Typed as string, to accept any string as feature name.
+      ? // In preview mode, all features are enabled.
+        // Typed as string to accept any string as a feature name.
         (true as unknown as string)
-      : config.features,
+      : features,
     local: isLocal,
+    permission: user?.permissions,
     preview: isPreview,
     role: user?.roles,
   };

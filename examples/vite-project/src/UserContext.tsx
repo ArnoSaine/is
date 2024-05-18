@@ -1,10 +1,17 @@
 import { PropsWithChildren, createContext, useContext, useState } from "react";
 
 type Role = "admin";
+type Permission =
+  | "create-articles"
+  | "read-articles"
+  | "update-articles"
+  | "delete-articles";
 
 interface User {
+  id: number;
   name: string;
   roles?: Role[];
+  permissions?: Permission[];
 }
 
 const UserContext = createContext<
