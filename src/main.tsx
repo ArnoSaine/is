@@ -48,7 +48,10 @@ export function create<Values_ = Values>(
   const loadIs =
     loadValues &&
     async function loadIs(args: Args) {
-      return is(await loadValues(args));
+      const values = await loadValues(args);
+      const _is = is(values) as any;
+      _is.values = values;
+      return _is;
     };
 
   const is = curry(
@@ -79,6 +82,11 @@ export function create<Values_ = Values>(
   return [Is, useIs, loadIs] as const;
 }
 
+interface Options {
+  routeId?: string;
+  prop?: string;
+}
+
 export const createFromLoader = <
   Values extends {
     [key: string]: undefined | boolean | string[];
@@ -86,9 +94,12 @@ export const createFromLoader = <
 >(
   loadValues: (args: Args) => Values | Promise<Values>,
   defaultConditions?: Conditions<Values>,
-  routeId = "root",
-  prop = "is"
+  options: Options = {}
 ) => {
+  let { routeId, prop } = options;
+  routeId ??= "root";
+  prop ??= "is";
+
   const [Is, useIs, loadIs] = create(
     () => useRouteLoaderData<any>(routeId)?.[prop] ?? {},
     defaultConditions,

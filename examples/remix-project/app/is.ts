@@ -1,16 +1,15 @@
 import { createFromLoader } from "@arnosaine/is";
-import { ClientLoaderFunctionArgs } from "@remix-run/react";
 import configs from "../configs.json";
 import { loadUser } from "./loaders/user";
 
 type Domain = keyof typeof configs;
 
-export const loadValues = (async (args: ClientLoaderFunctionArgs) => {
+const [Is, useIs, loadIs] = createFromLoader(async (args) => {
   const { hostname, pathname } = new URL(args.request.url);
   const hostnameParts = hostname.split(".");
 
   const domain = hostname.endsWith(".localhost")
-    ? // If used as <domain>.localhost, get subdomain.
+    ? // On <domain>.localhost, get subdomain.
       hostname.slice(0, -".localhost".length)
     : hostname;
 
@@ -28,16 +27,14 @@ export const loadValues = (async (args: ClientLoaderFunctionArgs) => {
   return {
     authenticated: Boolean(user),
     feature: isPreview
-      ? // In preview mode all features are enabled.
-        // Typed as string, to accept any string as feature name.
+      ? // In preview mode, all features are enabled.
+        // Typed as string to accept any string as a feature name.
         (true as unknown as string)
       : config?.features,
     local: isLocal,
     preview: isPreview,
     role: user?.roles,
   };
-})!;
-
-const [Is, useIs, loadIs] = createFromLoader(loadValues);
+});
 
 export { Is, loadIs, useIs };

@@ -12,7 +12,7 @@ import {
 import DarkModeToggle from "~/components/DarkModeToggle";
 import LoginAndLogout from "~/components/LoginAndLogout";
 import PreviewBanner from "~/components/PreviewBanner";
-import { Is, loadValues } from "~/is";
+import { Is, loadIs } from "~/is";
 import { loadColorScheme } from "~/loaders/colorScheme";
 import { loadUser } from "~/loaders/user";
 
@@ -21,10 +21,12 @@ export const meta: MetaFunction = () => {
 };
 
 export const clientLoader = async (args: ClientLoaderFunctionArgs) => {
+  const is = await loadIs(args);
+
   return {
     user: loadUser(),
     colorScheme: loadColorScheme(),
-    is: await loadValues(args),
+    is: is.values,
   };
 };
 
