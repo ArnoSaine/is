@@ -1,4 +1,4 @@
-rm -rf public
+rm -rf public/is
 
 cd examples/remix-project
 
