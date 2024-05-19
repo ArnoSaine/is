@@ -1,12 +1,12 @@
 # @arnosaine/is
 
-Feature flags, roles and permissions-based rendering, A/B testing, and more in React.
+[Feature Flags](#feature-flags), [roles and permissions-based rendering](#user-roles-and-permissions), [A/B Testing, Experimental Features](#ab-testing-experimental-features), and more in React.
 
-Create a custom `<Is>` component and `useIs` hook for any conditional rendering use cases.
+[Create](#create-is--useis) a custom [`<Is>`](#is) component and [`useIs`](#useis) hook for any conditional rendering use cases.
 
-Or create shorthand components like `<IsAuthenticated>` and `<HasRole>`, and hooks like `useIsAuthenticated` and `useHasRole`, for the most common use cases.
+Or create [shortcut components](#shortcut-components-and-hooks) like `<IsAuthenticated>` and `<HasRole>`, and hooks like `useIsAuthenticated` and `useHasRole`, for the most common use cases.
 
-If you are using React Router or Remix, use `createFromLoader` to also create `loadIs` loader and utility functions like `authenticated`.
+If you are using React Router or Remix, use [`createFromLoader`](#setup) to also create [`loadIs`](#loadis) loader and utility functions like [`authenticated`](#utilities).
 
 ## Contents
 
@@ -19,7 +19,7 @@ If you are using React Router or Remix, use `createFromLoader` to also create `l
     - [Hardcoded Features](#hardcoded-features)
     - [Build Time Features](#build-time-features)
     - [Runtime Features](#runtime-features)
-    - [A/B Testing](#ab-testing)
+    - [A/B Testing, Experimental Features](#ab-testing-experimental-features)
     - [Enable All Features in Preview Mode](#enable-all-features-in-preview-mode)
     - [Usage](#usage)
   - [Application Variants by the Domain](#application-variants-by-the-domain)
@@ -28,12 +28,12 @@ If you are using React Router or Remix, use `createFromLoader` to also create `l
     - [Usage](#usage-2)
   - [Is a Specific Day](#is-a-specific-day)
     - [Usage](#usage-3)
-  - [Shorthand Components and Hooks](#shorthand-components-and-hooks)
+  - [Shortcut Components and Hooks](#shortcut-components-and-hooks)
     - [Usage](#usage-4)
-- [Loader (React Router / Remix)](#loader-react-router-remix)
+- [Loader (React Router / Remix)](#loader-react-router--remix)
   - [Setup](#setup)
   - [Using `loadIs`](#using-loadis)
-  - [Helpers](#helpers)
+  - [Utilities](#utilities)
 - [API](#api)
   - [`create`](#create)
   - [`createFromLoader`](#createfromloader)
@@ -51,7 +51,7 @@ If you are using React Router or Remix, use `createFromLoader` to also create `l
 
 ## Getting Started
 
-Here we create a component and a hook to check if the user is authenticated or if experimental features are enabled. We get the user from `UserContext`. Experimental features are enabled on `preview.*` hosts, e.g. http://preview.localhost:5173.
+Here, we create a component and a hook to check if the user is authenticated or if experimental features are enabled. We get the user from `UserContext`. Experimental features are enabled on `preview.*` domains, for example, at http://preview.localhost:5173.
 
 ### Create `<Is>` & `useIs`
 
@@ -109,7 +109,7 @@ const isExperimental = useIs({ experimental: true }); // boolean
 
 #### Hardcoded Features
 
-A list of hardcoded features is perhaps the simplest method and could improve the project workflow – for example, in the `release` branch some features may be enabled, and in `development` or `feature` branches, something else.
+A list of hardcoded features is perhaps the simplest method and can still improve the project workflow. For example, some features can be enabled in the `release` branch, while different features can be enabled in the `development` or `feature` branches.
 
 `./is.ts`:
 
@@ -190,7 +190,7 @@ const [Is, useIs] = create(function useValues() {
 export { Is, useIs };
 ```
 
-#### A/B Testing
+#### A/B Testing, Experimental Features
 
 Enable some features based on other values:
 
@@ -204,9 +204,15 @@ const [Is, useIs] = create(function useValues() {
     /*...*/
   ];
 
-  // Enable some features just in development mode:
+  // Enable some features only in development mode:
   if (import.meta.env.MODE === "development") {
     features.push("new-login-form");
+  }
+
+  // Or, enable some features only on `dev.*` domains, for example, at
+  // http://dev.localhost:5173:
+  if (location.hostname.startsWith("dev.")) {
+    features.push("new-landing-page");
   }
 
   return {
@@ -267,7 +273,7 @@ const newLoginFormIsEnabled = useIs({ feature: "new-login-form" });
 
 > ⚠️ The code for other variants is included in the bundle, even if it's not rendered. Consider lazy loading if the code for the variant gets large.
 
-> ℹ️ In the browser, `location.hostname` is a constant, and `location.hostname === "example.com" && <p>This appears only on example.com</p>` could be everything we need. We might still use the `is` pattern for consistency and for server-side actions and loaders.
+> ℹ️ In the browser, `location.hostname` is a constant, and `location.hostname === "example.com" && <p>This appears only on example.com</p>` could be all you need. You might still choose to use the `<Is>` component for consistency and for server-side actions and loaders.
 
 `./is.ts`:
 
@@ -387,7 +393,7 @@ import { Is, useIs } from "./is";
 const isEaster = useIs({ easter: true });
 ```
 
-### Shorthand Components and Hooks
+### Shortcut Components and Hooks
 
 `./is.ts`:
 
@@ -543,7 +549,7 @@ export const loader = (args: LoaderFunctionArgs) => {
 };
 ```
 
-### Helpers
+### Utilities
 
 `./app/utils/auth.tsx`:
 
