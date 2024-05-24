@@ -26,11 +26,9 @@ const [Is, useIs, loadIs] = createFromLoader(async (args) => {
 
   return {
     authenticated: Boolean(user),
-    feature: isPreview
-      ? // In preview mode, all features are enabled.
-        // Typed as string to accept any string as a feature name.
-        (true as unknown as string)
-      : config?.features,
+    feature: (isPreview
+      ? true // In preview mode, all features are enabled
+      : config?.features) as ("dark-mode-switch" | "new-feature")[],
     local: isLocal,
     preview: isPreview,
     role: user?.roles,

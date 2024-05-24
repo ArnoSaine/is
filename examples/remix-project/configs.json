@@ -1,8 +1,8 @@
 {
   "acme.com": {
-    "features": ["dark-mode"]
+    "features": ["dark-mode-switch"]
   },
   "example.com": {
-    "features": ["new"]
+    "features": ["new-feature"]
   }
 }

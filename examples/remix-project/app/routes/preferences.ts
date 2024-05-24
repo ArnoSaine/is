@@ -9,7 +9,7 @@ export const clientAction = async (args: ClientActionFunctionArgs) => {
 
   if (formData.has("colorScheme")) {
     // Throws 403 Forbidden if the feature is not enabled
-    await allowed(is({ feature: "dark-mode" }));
+    await allowed(is({ feature: "dark-mode-switch" }));
 
     const colorScheme = formData.get("colorScheme");
     if (colorScheme) {

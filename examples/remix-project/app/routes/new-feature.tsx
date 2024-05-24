@@ -5,7 +5,7 @@ import { loadIs } from "~/is";
 export const clientLoader = async (args: ClientLoaderFunctionArgs) => {
   const is = await loadIs(args);
 
-  await found(is({ feature: "new" }));
+  await found(is({ feature: "new-feature" }));
 
   return null;
 };

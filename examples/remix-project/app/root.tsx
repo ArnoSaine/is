@@ -63,7 +63,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <PreviewBanner />
         </Is>
         <LoginAndLogout />
-        <Is feature="dark-mode">
+        <Is feature="dark-mode-switch">
           <DarkModeToggle />
         </Is>
         <p>
@@ -99,7 +99,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </li>
           <li>
             <Link to="/new-feature">New Feature</Link>
-            <Is feature="new" fallback=" ⛔️" />
+            <Is feature="new-feature" fallback=" ⛔️" />
           </li>
         </ul>
         {children}
