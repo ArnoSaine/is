@@ -531,6 +531,8 @@ const canUpdateArticles = useCanUpdateArticles();
    };
    ```
 
+> ℹ️ The root `ErrorBoundary` does not have access to the root `loader` data. Since the root `Layout` export is shared with the root `ErrorBoundary`, if you use `<Is>` or `useIs` in the `Layout` export, consider prefixing all routes with `\_.` (pathless route) and using `ErrorBoundary` in [`routes/_.tsx`](examples/remix-project/app/routes/_.tsx) to catch errors before they reach the root `ErrorBoundary`.
+
 ### Using `loadIs`
 
 ```tsx
