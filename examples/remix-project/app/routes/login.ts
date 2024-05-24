@@ -1,6 +1,7 @@
 import { ClientActionFunctionArgs } from "@remix-run/react";
+import { User } from "~/loaders/user";
 
-const mockUsers = [
+const mockUsers: User[] = [
   {
     name: "admin",
     roles: ["admin"],
