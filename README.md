@@ -40,9 +40,9 @@ If you are using React Router or Remix, use [`createFromLoader`](#setup) to also
   - [`<Is>`](#is)
   - [`useIs`](#useis)
   - [`loadIs`](#loadis)
+  - [`is`](#is-1)
   - [`Values`](#values)
   - [`Conditions`](#conditions)
-  - [`Defaults`](#defaults)
 
 ## Demos
 
@@ -103,13 +103,15 @@ const isAuthenticated = useIs({ authenticated: true }); // boolean
 const isExperimental = useIs({ experimental: true }); // boolean
 ```
 
+> ℹ️ Consider lazy loading if the conditional code becomes large. Otherwise, the conditional code is included in the bundle, even if it's not rendered. Additionally, do not use this method if the non-rendered code should remain secret.
+
 ## Ideas
 
 ### Feature Flags
 
 #### Hardcoded Features
 
-A list of hardcoded features is perhaps the simplest method and can still improve the project workflow. For example, some features can be enabled in the `release` branch, while different features can be enabled in the `development` or `feature` branches.
+A list of hardcoded features is perhaps the simplest method and can still improve the project workflow. For example, some features can be enabled in the `release` branch, while different features can be enabled in the `main` or `feature` branches.
 
 `./is.ts`:
 
@@ -271,9 +273,7 @@ const newLoginFormIsEnabled = useIs({ feature: "new-login-form" });
 
 ### Application Variants by the Domain
 
-> ⚠️ The code for other variants is included in the bundle, even if it's not rendered. Consider lazy loading if the code for the variant gets large.
-
-> ℹ️ In the browser, `location.hostname` is a constant, and `location.hostname === "example.com" && <p>This appears only on example.com</p>` could be all you need. You might still choose to use the `<Is>` component for consistency and for server-side actions and loaders.
+> ℹ️ In the browser, `location.hostname` is a constant, and `location.hostname === "example.com" && <p>This appears only on example.com</p>` could be all you need. You might still choose to use the Is pattern for consistency and for server-side actions and loaders.
 
 `./is.ts`:
 
@@ -491,46 +491,45 @@ const canUpdateArticles = useCanUpdateArticles();
 
 ### Setup
 
-Create `<Is>`, `useIs` & `loadIs` using `createFromLoader`.
+1. Create `<Is>`, `useIs` & `loadIs` using `createFromLoader`.
 
-`./app/is.ts`:
+   `./app/is.ts`:
 
-```tsx
-import { createFromLoader } from "@arnosaine/is";
-import { LoaderFunctionArgs } from "@remix-run/node";
-import { loadConfig, loadUser } from "./loaders";
+   ```tsx
+   import { createFromLoader } from "@arnosaine/is";
+   import { LoaderFunctionArgs } from "@remix-run/node";
+   import { loadConfig, loadUser } from "./loaders";
 
-const [Is, useIs, loadIs] = createFromLoader(async (args) => {
-  const user = await loadUser(args);
-  const config = await loadConfig(args);
+   const [Is, useIs, loadIs] = createFromLoader(async (args) => {
+     const user = await loadUser(args);
+     const config = await loadConfig(args);
 
-  return {
-    authenticated: Boolean(user),
-    feature: config?.features,
-    role: user?.roles,
-  };
-});
+     return {
+       authenticated: Boolean(user),
+       feature: config?.features,
+       role: user?.roles,
+     };
+   });
 
-export { loadIs };
-```
+   export { loadIs };
+   ```
 
-`./app/root.tsx`:
+   `./app/root.tsx`:
 
-Return `is.values` as `is` from the root loader.
+2. Return `is.__values` as `__is` from the root `loader` / `clientLoader`. See [options](#parameters-1) to use other route or prop name.
 
-```tsx
-import { loadIs } from "./is";
+   ```tsx
+   import { loadIs } from "./is";
 
-// Or clientLoader
-export const loader = (args: LoaderFunctionArgs) => {
-  const is = await loadIs(args);
+   export const loader = (args: LoaderFunctionArgs) => {
+     const is = await loadIs(args);
 
-  return {
-    is: is.values,
-    // ...
-  };
-};
-```
+     return {
+       __is: is.__values,
+       // ...
+     };
+   };
+   ```
 
 ### Using `loadIs`
 
@@ -550,6 +549,8 @@ export const loader = (args: LoaderFunctionArgs) => {
 ```
 
 ### Utilities
+
+> ℹ️ See Remix example [utils/auth.ts](examples/remix-project/utils/auth.ts) and [utils/response.ts](examples/remix-project/utils/response.ts) for more examples.
 
 `./app/utils/auth.tsx`:
 
@@ -597,16 +598,174 @@ export const loader = (args: LoaderFunctionArgs) => {
 
 ### `create`
 
+Call `create` to declare the [`Is`](#is) component and the [`useIs`](#useis) hook.
+
+```ts
+const [Is, useIs] = create(useValues, defaultConditions?);
+```
+
+The names `Is` and `useIs` are recommended for a multi-purpose component and hook. For single-purpose use, you can name them accordingly. The optional `defaultConditions` parameter is also often useful for single-purpose implementations.
+
+```ts
+const [IsAuthenticated, useIsAuthenticated] = create(
+  () => {
+    // Retrieve the user. Since this is a hook, using other hooks and context is allowed.
+    const user = { name: "Example" }; // Example: use(UserContext)
+    return { authenticated: Boolean(user) };
+  },
+  { authenticated: true }
+);
+```
+
+#### Parameters
+
+- `useValues`: A React hook that acquires and computes the current [`values`](#values) for the comparison logic.
+- **optional** `defaultConditions`: The default props/params for [`Is`](#is) and [`useIs`](#useis).
+
+#### Returns
+
+`create` returns an array containing the [`Is`](#is) component and the [`useIs`](#useis) hook.
+
 ### `createFromLoader`
+
+Call `createFromLoader` to declare the [`Is`](#is) component the [`useIs`](#useis) hook and the [`loadIs`](#loadis) loader.
+
+```ts
+const [Is, useIs, loadIs] = createFromLoader(loadValues, defaultConditions?, options?);
+```
+
+The names `Is`, `useIs` and `loadIs` are recommended for a multi-purpose component, hook, and loader. For single-purpose use, you can name them accordingly. The optional `defaultConditions` parameter is also often useful for single-purpose implementations.
+
+```ts
+const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
+  createFromLoader(
+    async (args) => {
+      // Retrieve the user. Since this is a loader, using await and other loaders is allowed.
+      const user = await loadUser(args);
+      return { authenticated: Boolean(user) };
+    },
+    { authenticated: true }
+  );
+```
+
+#### Parameters
+
+- `loadValues`: A React Router / Remix loader that acquires and computes the current `values` for the comparison logic.
+- **optional** `defaultConditions`: The default props/params for [`Is`](#is), [`useIs`](#useis) and [`is`](#is-1).
+- **optional** `options`: An options object that can change the property name and route ID.
+  - **optional** `prop`: Default: `"__is"`.
+  - **optional** `routeId`: Default: `"root"`. Example: `"routes/admin"`.
+
+#### Returns
+
+`createFromLoader` returns an array containing the [`Is`](#is) component, the [`useIs`](#useis) hook and the [`loadIs`](#loadis) loader.
 
 ### `<Is>`
 
+#### Props
+
+- `...conditions`: Values that are merged with the `defaultConditions` and then compared to the [`useValues`](#usevalues) / [`loadValues`](#loadvalues) return value. If multiple conditions are given, all must match. Array type condition / value is matched such that if any item matches, the condition is `true`.
+- **optional** `children`: The UI you intend to render if all conditions match.
+- **optional** `fallback`: The UI you intend to render if some condition does not match.
+
+#### Usage
+
+```tsx
+<Is authenticated fallback="Please log in">
+  Hello!
+</Is>
+
+<IsAuthenticated fallback="Please log in">Hello!</IsAuthenticated>
+```
+
 ### `useIs`
+
+#### Parameters
+
+- `conditions`: Values that are merged with the `defaultConditions` and then compared to the [`useValues`](#usevalues) / [`loadValues`](#loadvalues) return value. If multiple conditions are given, all must match. Array type condition / value is matched such that if any item matches, the condition is `true`.
+
+#### Returns
+
+`useIs` returns `true` if all conditions match, `false` otherwise.
+
+#### Usage
+
+```tsx
+const isAuthenticated = useIs({ authenticated: true });
+const isAuthenticated = useIsAuthenticated();
+```
 
 ### `loadIs`
 
+#### Parameters
+
+- `args`: React Router / Remix `LoaderFunctionArgs`, `ActionFunctionArgs`, `ClientLoaderFunctionArgs`, or `ClientActionFunctionArgs`.
+
+#### Returns
+
+`loadIs` returns a `Promise` that resolves to the [`is`](#is-1) function.
+
+#### Usage
+
+```tsx
+export const loader = async (args: LoaderFunctionArgs) => {
+  const is = await loadIs(args);
+  const authenticated = await loadIsAuthenticated(args);
+
+  const isAuthenticated = is({ authenticated: true });
+  const isAuthenticated = authenticated();
+  // ...
+};
+```
+
+### `is`
+
+`is` function is the awaited return value of calling [`loadIs`](#loadis).
+
+#### Parameters
+
+- `conditions`: Values that are merged with the `defaultConditions` and then compared to the [`useValues`](#usevalues) / [`loadValues`](#loadvalues) return value. If multiple conditions are given, all must match. Array type condition / value is matched such that if any item matches, the condition is `true`.
+
+#### Returns
+
+`is` returns a `true` if all conditions match, `false` otherwise.
+
+#### Usage
+
+In `root.tsx` you must also return `is.__values` as `__is` from the `loader` / `clientLoader`. See [options](#parameters-1) to use other route or prop name.
+
+```tsx
+export const loader = (args: LoaderFunctionArgs) => {
+  const is = await loadIs(args);
+
+  return {
+    __is: is.__values,
+    // ...
+  };
+};
+```
+
 ### `Values`
+
+- Type `Values` is `Record<string, Value | Value[]>`, where `Value` is `boolean | number | string`.
+
+#### Example
+
+```json
+{
+  "authenticated": true,
+  "roles": ["admin"]
+}
+```
 
 ### `Conditions`
 
-### `Defaults`
+- Type `Conditions` is `Partial<Values>`
+
+#### Example
+
+```json
+{
+  "roles": "admin"
+}
+```
