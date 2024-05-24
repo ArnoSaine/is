@@ -29,6 +29,7 @@
     "start:examples": "serve public/ --listen 3000"
   },
   "dependencies": {
+    "@remix-run/react": "^2.8.1",
     "lodash-es": "^4.17.21"
   },
   "devDependencies": {
