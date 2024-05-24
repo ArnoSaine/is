@@ -26,7 +26,7 @@ export const clientLoader = async (args: ClientLoaderFunctionArgs) => {
   return {
     user: loadUser(),
     colorScheme: loadColorScheme(),
-    is: is.values,
+    __is: is.__values,
   };
 };
 
