@@ -674,7 +674,9 @@ const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
 
 #### Props
 
-- `...conditions`: Values that are merged with the `defaultConditions` and then compared to the [`useValues`](#parameters) / [`loadValues`](#parameters-1) return value. If multiple conditions are given, all must match. Array type condition / value is matched such that if any item matches, the condition is `true`.
+- `...conditions`: Conditions are merged with the `defaultConditions` and then compared to the [`useValues`](#parameters) / [`loadValues`](#parameters-1) return value. If multiple conditions are given, all must match their corresponding values. For any array-type condition:
+  - If the corresponding value is also an array, the array must include all condition entries.
+  - If the corresponding value is not an array, the value must be one of the condition entries.
 - **optional** `children`: The UI you intend to render if all conditions match.
 - **optional** `fallback`: The UI you intend to render if some condition does not match.
 

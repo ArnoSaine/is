@@ -67,6 +67,10 @@ function __create<V extends Values, C extends Conditions<V>>(
           return value.includes(condition);
         }
 
+        if (Array.isArray(condition)) {
+          return condition.includes(value);
+        }
+
         if (typeof value === "boolean") {
           return value === Boolean(condition);
         } else {
