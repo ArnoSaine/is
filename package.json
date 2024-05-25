@@ -1,6 +1,6 @@
 {
   "name": "@arnosaine/is",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Conditional rendering",
   "homepage": "https://github.com/ArnoSaine/is",
   "repository": {
@@ -25,6 +25,7 @@
   "scripts": {
     "build": "tsc",
     "build:examples": "./build-examples.sh",
+    "release": "npm run build && changeset version && changeset publish",
     "start": "tsc --watch",
     "start:examples": "serve public/ --listen 3000"
   },
@@ -33,6 +34,7 @@
     "lodash-es": "^4.17.21"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.3",
     "@remix-run/node": "^2.8.1",
     "@types/lodash-es": "^4.17.12",
     "@types/react": "^18.2.20",
