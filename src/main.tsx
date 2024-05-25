@@ -31,7 +31,7 @@ type Conditions<
 
 type Values<Value = unknown> = {
   [key: string]: Value | Value[];
-};
+} & { children?: never; fallback?: never };
 
 type Loader<Values> = (args: Args) => Values | Promise<Values>;
 
