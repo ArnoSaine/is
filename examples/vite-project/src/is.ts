@@ -2,6 +2,10 @@ import { create } from "@arnosaine/is";
 import * as React from "react";
 import { useUser } from "./UserContext";
 
+const availableFeatures = ["counter", "new-footer", "other"] as const;
+
+type Feature = (typeof availableFeatures)[number];
+
 const { use } = React as unknown as {
   use: <Value>(promise: Promise<Value>) => Value;
 };
@@ -40,11 +44,9 @@ const useValues = () => {
 
   return {
     authenticated: Boolean(user),
-    feature: isPreview
-      ? // In preview mode, all features are enabled.
-        // Typed as string to accept any string as a feature name.
-        (true as unknown as string)
-      : features,
+    feature: (isPreview
+      ? true // In preview mode, all features are enabled
+      : features) as Feature[],
     local: isLocal,
     permission: user?.permissions,
     preview: isPreview,

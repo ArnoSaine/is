@@ -2,7 +2,10 @@ import { createFromLoader } from "@arnosaine/is";
 import configs from "../configs.json";
 import { loadUser } from "./loaders/user";
 
+const availableFeatures = ["dark-mode-switch", "new-feature"] as const;
+
 type Domain = keyof typeof configs;
+type Feature = (typeof availableFeatures)[number];
 
 const [Is, useIs, loadIs] = createFromLoader(async (args) => {
   const { hostname, pathname } = new URL(args.request.url);
@@ -28,7 +31,7 @@ const [Is, useIs, loadIs] = createFromLoader(async (args) => {
     authenticated: Boolean(user),
     feature: (isPreview
       ? true // In preview mode, all features are enabled
-      : config?.features) as ("dark-mode-switch" | "new-feature")[],
+      : config?.features) as Feature[],
     local: isLocal,
     preview: isPreview,
     role: user?.roles,
