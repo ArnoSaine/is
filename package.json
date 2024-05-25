@@ -1,7 +1,7 @@
 {
   "name": "@arnosaine/is",
   "version": "0.1.0",
-  "description": "Conditional rendering",
+  "description": "Feature Flags, Roles and Permissions-based rendering, A/B Testing, Experimental Features, and more in React.",
   "homepage": "https://github.com/ArnoSaine/is",
   "repository": {
     "type": "git",
