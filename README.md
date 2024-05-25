@@ -157,7 +157,7 @@ export { Is, useIs };
 
 #### Runtime Features
 
-Read the enabled features from a config file, or an API at runtime:
+Read the enabled features from a config file or an API at runtime:
 
 `public/config.json`:
 
@@ -531,7 +531,7 @@ const canUpdateArticles = useCanUpdateArticles();
    };
    ```
 
-> ℹ️ The root `ErrorBoundary` does not have access to the root `loader` data. Since the root `Layout` export is shared with the root `ErrorBoundary`, if you use `<Is>` or `useIs` in the `Layout` export, consider prefixing all routes with `\_.` (pathless route) and using `ErrorBoundary` in [`routes/_.tsx`](examples/remix-project/app/routes/_.tsx) to catch errors before they reach the root `ErrorBoundary`.
+> ℹ️ The root `ErrorBoundary` does not have access to the root `loader` data. Since the root `Layout` export is shared with the root `ErrorBoundary`, if you use `<Is>` or `useIs` in the `Layout` export, consider prefixing all routes with `_.` (pathless route) and using `ErrorBoundary` in [`routes/_.tsx`](examples/remix-project/app/routes/_.tsx) to catch errors before they reach the root `ErrorBoundary`.
 
 ### Using `loadIs`
 
@@ -666,7 +666,7 @@ const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
 
 #### Props
 
-- `...conditions`: Values that are merged with the `defaultConditions` and then compared to the [`useValues`](#usevalues) / [`loadValues`](#loadvalues) return value. If multiple conditions are given, all must match. Array type condition / value is matched such that if any item matches, the condition is `true`.
+- `...conditions`: Values that are merged with the `defaultConditions` and then compared to the [`useValues`](#parameters) / [`loadValues`](#parameters-1) return value. If multiple conditions are given, all must match. Array type condition / value is matched such that if any item matches, the condition is `true`.
 - **optional** `children`: The UI you intend to render if all conditions match.
 - **optional** `fallback`: The UI you intend to render if some condition does not match.
 
@@ -684,7 +684,7 @@ const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
 
 #### Parameters
 
-- `conditions`: Values that are merged with the `defaultConditions` and then compared to the [`useValues`](#usevalues) / [`loadValues`](#loadvalues) return value. If multiple conditions are given, all must match. Array type condition / value is matched such that if any item matches, the condition is `true`.
+- `conditions`: Values that are merged with the `defaultConditions` and then compared to the [`useValues`](#parameters) / [`loadValues`](#parameters-1) return value. If multiple conditions are given, all must match. Array type condition / value is matched such that if any item matches, the condition is `true`.
 
 #### Returns
 
@@ -726,7 +726,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 
 #### Parameters
 
-- `conditions`: Values that are merged with the `defaultConditions` and then compared to the [`useValues`](#usevalues) / [`loadValues`](#loadvalues) return value. If multiple conditions are given, all must match. Array type condition / value is matched such that if any item matches, the condition is `true`.
+- `conditions`: Values that are merged with the `defaultConditions` and then compared to the [`useValues`](#parameters) / [`loadValues`](#parameters-1) return value. If multiple conditions are given, all must match. Array type condition / value is matched such that if any item matches, the condition is `true`.
 
 #### Returns
 
