@@ -2,6 +2,12 @@
 
 [Feature Flags](#feature-flags), [Roles and Permissions-based rendering](#user-roles-and-permissions), [A/B Testing, Experimental Features](#ab-testing-experimental-features), and [more](#application-variants-by-the-domain) in React.
 
+## Key Features
+
+- Declarative syntax for conditionally rendering components
+- Support for various data sources, including context, hooks, and API responses
+- Customizable with default conditions and dynamic values
+
 [Create](#create-is--useis) a custom [`<Is>`](#is) component and [`useIs`](#useis) hook for any conditional rendering use cases.
 
 Or create [shortcut components](#shortcut-components-and-hooks) like `<IsAuthenticated>` and `<HasRole>`, and hooks like `useIsAuthenticated` and `useHasRole`, for the most common use cases.
@@ -94,7 +100,7 @@ import { Is, useIs } from "./is";
 // Component
 
 <Is authenticated fallback="Please log in">
-  Hello!
+  Welcome back!
 </Is>;
 
 <Is experimental>
@@ -348,7 +354,7 @@ import { Is, useIs } from "./is";
 // Component
 
 <Is authenticated fallback="Please log in">
-  Hello!
+  Welcome back!
 </Is>;
 
 <Is role="admin">
@@ -406,7 +412,7 @@ const isEaster = useIs({ easter: true });
 ```tsx
 import { create } from "@arnosaine/is";
 import { use } from "react";
-import UserContext from "./UserContext";
+import UserContext, { Permission, Role } from "./UserContext";
 
 const [IsAuthenticated, useIsAuthenticated] = create(
   function useValues() {
@@ -423,7 +429,10 @@ const [HasRole, useHasRole] = create(function useValues() {
   const user = use(UserContext);
 
   // Create object { [role: string]: true }
-  return Object.fromEntries((user?.roles ?? []).map((role) => [role, true]));
+  return Object.fromEntries(
+    (user?.roles ?? []).map((role) => [role, true])
+  ) as Record<Role, true>;
+  // Record<"admin" | ..., true >;
 });
 
 export { HasRole, useHasRole };
@@ -434,7 +443,8 @@ const [HasPermission, useHasPermission] = create(function useValues() {
   // Create object { [permission: string]: true }
   return Object.fromEntries(
     (user?.permissions ?? []).map((permission) => [permission, true])
-  );
+  ) as Record<Permission, true>;
+  // Record<"create-articles" | "read-articles" | ..., true >
 });
 
 export { HasPermission, useHasPermission };
@@ -471,7 +481,7 @@ import {
 
 // Components
 
-<IsAuthenticated fallback="Please log in">Hello!</IsAuthenticated>;
+<IsAuthenticated fallback="Please log in">Welcome back!</IsAuthenticated>;
 
 <HasRole admin>
   <AdminPanel />
@@ -497,7 +507,7 @@ const canUpdateArticles = useCanUpdateArticles();
 
 ### Setup
 
-1. Create `<Is>`, `useIs` & `loadIs` using `createFromLoader`.
+1. Create `<Is>`, `useIs` & `loadIs` using [`createFromLoader`](#createfromloader).
 
    `./app/is.ts`:
 
@@ -507,17 +517,21 @@ const canUpdateArticles = useCanUpdateArticles();
    import { loadConfig, loadUser } from "./loaders";
 
    const [Is, useIs, loadIs] = createFromLoader(async (args) => {
+     const { hostname } = new URL(args.request.url);
+     const isPreview = hostname.startsWith("preview.");
      const user = await loadUser(args);
      const config = await loadConfig(args);
 
      return {
        authenticated: Boolean(user),
        feature: config?.features,
+       preview: isPreview,
        role: user?.roles,
+       // ...
      };
    });
 
-   export { loadIs };
+   export { Is, useIs, loadIs };
    ```
 
    `./app/root.tsx`:
@@ -550,6 +564,7 @@ export const loader = (args: LoaderFunctionArgs) => {
 
   const isAuthenticated = is({ authenticated: true });
   const hasFeatureABC = is({ feature: "feature-abc" });
+  const isPreview = is({ preview: true });
   const isAdmin = is({ role: "admin" });
 
   // ...
@@ -684,10 +699,10 @@ const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
 
 ```tsx
 <Is authenticated fallback="Please log in">
-  Hello!
+  Welcome back!
 </Is>
 
-<IsAuthenticated fallback="Please log in">Hello!</IsAuthenticated>
+<IsAuthenticated fallback="Please log in">Welcome back!</IsAuthenticated>
 ```
 
 ### `useIs`
@@ -773,7 +788,8 @@ export const loader = (args: LoaderFunctionArgs) => {
 ```ts
 const features = ["feature-abc", "feature-xyz"] as const;
 
-type Feature = (typeof features)[number]; // "feature-abc" | "feature-xyz"
+// "feature-abc" | "feature-xyz"
+type Feature = (typeof features)[number];
 ```
 
 ### `Values`
