@@ -1,7 +1,7 @@
 import { PropsWithChildren, createContext, useContext, useState } from "react";
 
-type Role = "admin";
-type Permission =
+export type Role = "admin";
+export type Permission =
   | "create-articles"
   | "read-articles"
   | "update-articles"
