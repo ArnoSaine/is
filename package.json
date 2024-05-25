@@ -13,14 +13,14 @@
     "email": "arno@mowhi.com"
   },
   "type": "module",
-  "workspaces": [
-    ".",
-    "examples/*"
-  ],
   "main": "./lib/main.js",
   "files": [
     "lib",
     "src"
+  ],
+  "workspaces": [
+    ".",
+    "examples/*"
   ],
   "scripts": {
     "build": "tsc",
@@ -44,5 +44,9 @@
   "peerDependencies": {
     "react": "*",
     "react-dom": "*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
   }
 }
