@@ -4,8 +4,7 @@
 
 ### Patch Changes
 
-- 75ff4a0: Update comparing value to array type condition. Fix README.
-- e432770: Update README.md
+- 75ff4a0: Update logic for comparing values to array-type conditions. Fix README.md.
 
 ## 0.1.0
 
