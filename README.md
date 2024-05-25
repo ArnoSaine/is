@@ -1,6 +1,6 @@
 # @arnosaine/is
 
-[Feature Flags](#feature-flags), [roles and permissions-based rendering](#user-roles-and-permissions), [A/B Testing, Experimental Features](#ab-testing-experimental-features), and more in React.
+[Feature Flags](#feature-flags), [Roles and Permissions-based rendering](#user-roles-and-permissions), [A/B Testing, Experimental Features](#ab-testing-experimental-features), and [more](#application-variants-by-the-domain) in React.
 
 [Create](#create-is--useis) a custom [`<Is>`](#is) component and [`useIs`](#useis) hook for any conditional rendering use cases.
 
@@ -41,6 +41,8 @@ If you are using React Router or Remix, use [`createFromLoader`](#setup) to also
   - [`useIs`](#useis)
   - [`loadIs`](#loadis)
   - [`is`](#is-1)
+- [Types](#types)
+  - [`Value`](#value)
   - [`Values`](#values)
   - [`Conditions`](#conditions)
 
@@ -67,12 +69,14 @@ const [Is, useIs] = create(function useValues() {
 
   const isExperimental = location.hostname.startsWith("preview.");
 
-  // Or, get the value from user context, hook call or somewhere else.
-  // const isExperimental = user?.roles?.include("developer") ?? false;
+  // Or, get the value from the user context, a hook call, or another
+  // source.
+  // const isExperimental = user?.roles?.includes("developer") ?? false;
 
   return {
-    // Any boolean | string | string[] values can be returned.
-    // These will become the prop and hook param names.
+    // The property names become the prop and hook param names.
+    // Allowed types: boolean | number | string | boolean[] | number[] |
+    // string[].
     authenticated: Boolean(user),
     experimental: isExperimental,
     // ...
@@ -121,7 +125,7 @@ import { create } from "@arnosaine/is";
 const [Is, useIs] = create(function useValues() {
   return {
     // Hardcoded features
-    feature: ["feature-abc", "feature-xyz"],
+    feature: ["feature-abc", "feature-xyz"] as const,
     // ...
   };
 });
@@ -131,7 +135,8 @@ export { Is, useIs };
 
 #### Build Time Features
 
-Read the enabled features from an environment variable at build time:
+Read the enabled features from an environment variable
+time:
 
 `.env`:
 
@@ -146,7 +151,8 @@ import { create } from "@arnosaine/is";
 
 const [Is, useIs] = create(function useValues() {
   return {
-    // Read the enabled features from an environment variable at build time
+    // Read the enabled features from an environment variable at build
+    // time
     feature: JSON.parse(import.meta.env.FEATURES ?? "[]"),
     // ...
   };
@@ -574,8 +580,8 @@ export const authenticated = async (
     });
   }
 
-  // If the optional role parameter is available, ensure the user has the
-  // required roles
+  // If the optional role parameter is available, ensure the user has
+  // the required roles
   if (!is({ role })) {
     throw new Response("Forbidden", {
       status: 403,
@@ -611,7 +617,8 @@ The names `Is` and `useIs` are recommended for a multi-purpose component and hoo
 ```ts
 const [IsAuthenticated, useIsAuthenticated] = create(
   () => {
-    // Retrieve the user. Since this is a hook, using other hooks and context is allowed.
+    // Retrieve the user. Since this is a hook, using other hooks and
+    // context is allowed.
     const user = { name: "Example" }; // Example: use(UserContext)
     return { authenticated: Boolean(user) };
   },
@@ -642,7 +649,8 @@ The names `Is`, `useIs` and `loadIs` are recommended for a multi-purpose compone
 const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
   createFromLoader(
     async (args) => {
-      // Retrieve the user. Since this is a loader, using await and other loaders is allowed.
+      // Retrieve the user. Since this is a loader, using await and
+      // other loaders is allowed.
       const user = await loadUser(args);
       return { authenticated: Boolean(user) };
     },
@@ -747,9 +755,24 @@ export const loader = (args: LoaderFunctionArgs) => {
 };
 ```
 
+## Types
+
+### `Value`
+
+- Type `Value` is `boolean | number | string`.
+- It may also be a more specific set of values.
+
+#### Example
+
+```ts
+const features = ["feature-abc", "feature-xyz"] as const;
+
+type Feature = (typeof features)[number]; // "feature-abc" | "feature-xyz"
+```
+
 ### `Values`
 
-- Type `Values` is `Record<string, Value | Value[]>`, where `Value` is `boolean | number | string`.
+- Type `Values` is `Record<string, Value | Value[]>`.
 
 #### Example
 
@@ -762,7 +785,7 @@ export const loader = (args: LoaderFunctionArgs) => {
 
 ### `Conditions`
 
-- Type `Conditions` is `Partial<Values>`
+- Type `Conditions` is `Partial<Values>`.
 
 #### Example
 
