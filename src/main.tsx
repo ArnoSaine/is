@@ -46,7 +46,7 @@ interface Options {
   prop?: string;
 }
 
-function __create<V = Values, C = Conditions<V>>(
+function __create<V extends Values, C extends Conditions<V>>(
   useValues: () => V,
   defaultConditions?: C
 ) {
@@ -91,16 +91,16 @@ function __create<V = Values, C = Conditions<V>>(
   return { Is, useIs, is };
 }
 
-export function create<V = Values>(
+export function create<V extends Values>(
   useValues: () => V,
   defaultConditions?: Conditions<V>
 ) {
-  const { Is, useIs } = __create<V>(useValues, defaultConditions);
+  const { Is, useIs } = __create(useValues, defaultConditions);
 
   return [Is, useIs] as const;
 }
 
-export function createFromLoader<V = Values>(
+export function createFromLoader<V extends Values>(
   loadValues: Loader<V>,
   defaultConditions?: Conditions<V>,
   options: Options = {}
@@ -110,7 +110,7 @@ export function createFromLoader<V = Values>(
   // The hook and the component get values from the root loader
   const useValues = () => useRouteLoaderData<any>(routeId)?.[prop] ?? {};
 
-  const { Is, useIs, is } = __create<V>(useValues, defaultConditions);
+  const { Is, useIs, is } = __create(useValues, defaultConditions);
 
   async function loadIs(args: Args) {
     const __values = await loadValues(args);
