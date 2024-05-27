@@ -336,8 +336,8 @@ const [Is, useIs] = create(function useValues() {
 
   return {
     authenticated: Boolean(user),
-    role: user?.roles,
-    permission: user?.permissions,
+    role: user?.roles, // ["admin", ...]
+    permission: user?.permissions, // ["create-articles", ...]
     // ...
   };
 });
@@ -800,7 +800,13 @@ type Feature = (typeof features)[number];
 ```json
 {
   "authenticated": true,
-  "roles": ["admin"]
+  "roles": ["admin"],
+  "permissions": [
+    "create-articles",
+    "read-articles",
+    "update-articles",
+    "delete-articles"
+  ]
 }
 ```
 
