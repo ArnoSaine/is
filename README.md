@@ -141,8 +141,7 @@ export { Is, useIs };
 
 #### Build Time Features
 
-Read the enabled features from an environment variable
-time:
+Read the enabled features from an environment variable at build time:
 
 `.env`:
 
