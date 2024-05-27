@@ -279,7 +279,7 @@ import { Is, useIs } from "./is";
 
 // Hook
 
-const newLoginFormIsEnabled = useIs({ feature: "new-login-form" });
+const showNewLoginForm = useIs({ feature: "new-login-form" });
 ```
 
 ### Application Variants by the Domain
