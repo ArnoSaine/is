@@ -23,11 +23,13 @@
     "examples/*"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --project tsconfig.build.json",
     "build:examples": "./build-examples.sh",
+    "dev": "tsc --project tsconfig.build.json --watch",
     "release": "npm run build && changeset version && changeset publish",
-    "start": "tsc --watch",
-    "start:examples": "serve public/ --listen 3000"
+    "start:examples": "serve public/ --listen 3000",
+    "test": "node --test && tsc",
+    "test:watch": "concurrently \"node --test --watch\" \"tsc --watch\""
   },
   "dependencies": {
     "@remix-run/react": "^2.8.1",
@@ -39,6 +41,7 @@
     "@types/lodash-es": "^4.17.12",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
+    "concurrently": "^8.2.2",
     "typescript": "^5.4.5"
   },
   "peerDependencies": {

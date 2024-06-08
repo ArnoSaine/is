@@ -9,29 +9,35 @@ import { ReactNode } from "react";
 
 type Flatten<Type> = Type extends Array<infer Item> ? Item : Type;
 type Unflatten<Type> = Type extends Array<infer Item> ? Item[] : Type[];
+type Boolean<T> = T extends boolean ? T : never;
 type NonBoolean<T> = T extends boolean ? never : T;
-
-type FlattenProperties<T> = {
-  [P in keyof T]: Flatten<T[P]>;
-};
-
-type UnflattenNonBooleanProperties<T> = {
-  [P in keyof T]: Unflatten<NonBoolean<T[P]>>;
-};
-
-type Conditions<
-  Values,
-  A = FlattenProperties<Values>,
-  B = UnflattenNonBooleanProperties<Values>
-> = Partial<{
+type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+type Merge<A, B> = {
   [K in keyof A | keyof B]:
     | (K extends keyof A ? A[K] : never)
     | (K extends keyof B ? B[K] : never);
-}>;
+};
+type Never<T> = {
+  [P in keyof T]: never;
+};
+
+interface ElementProps {
+  children?: ReactNode;
+  fallback?: ReactNode;
+}
+
+type Condition<Value> =
+  | Flatten<Boolean<Value> | NonBoolean<Writeable<Value>>>
+  | Unflatten<NonBoolean<Writeable<Value>>>;
+
+type Conditions<Values> = Partial<{
+  [P in keyof Values]: Readonly<Condition<Values[P]>>;
+}> &
+  Never<ElementProps>;
 
 type Values<Value = unknown> = {
-  [key: string]: Value | Value[];
-} & { children?: never; fallback?: never };
+  [key: string]: Value;
+} & Never<ElementProps>;
 
 type Loader<Values> = (args: Args) => Values | Promise<Values>;
 
@@ -87,10 +93,8 @@ function __create<V extends Values, C extends Conditions<V>>(
     children = null,
     fallback = null,
     ...conditions
-  }: {
-    children?: ReactNode;
-    fallback?: ReactNode;
-  } & C) => (useIs(conditions as C) ? children : fallback);
+  }: Partial<Merge<ElementProps, C>>) =>
+    useIs(conditions as C) ? children : fallback;
 
   return { Is, useIs, is };
 }

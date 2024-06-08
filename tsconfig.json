@@ -8,6 +8,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "newLine": "lf",
+    "noEmit": true,
     "noEmitOnError": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

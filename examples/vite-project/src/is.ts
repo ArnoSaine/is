@@ -4,8 +4,6 @@ import { useUser } from "./UserContext";
 
 const availableFeatures = ["counter", "new-footer", "other"] as const;
 
-type Feature = (typeof availableFeatures)[number];
-
 const { use } = React as unknown as {
   use: <Value>(promise: Promise<Value>) => Value;
 };
@@ -46,7 +44,7 @@ const useValues = () => {
     authenticated: Boolean(user),
     feature: (isPreview
       ? true // In preview mode, all features are enabled
-      : features) as Feature[],
+      : features) as unknown as typeof availableFeatures,
     local: isLocal,
     permission: user?.permissions,
     preview: isPreview,
