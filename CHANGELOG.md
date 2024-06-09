@@ -1,5 +1,11 @@
 # @arnosaine/is
 
+## 0.2.0
+
+### Minor Changes
+
+- ebdd4bd: Change the default method to match array type values and conditions from "every" to "some".
+
 ## 0.1.3
 
 ### Patch Changes
