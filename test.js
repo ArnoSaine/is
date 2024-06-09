@@ -4,43 +4,100 @@ import test from "node:test";
 
 const values = {
   string: "a",
+  array0: [],
   array1: ["a"],
   array3: ["a", "b", "c"],
   boolean: true,
 };
 
-const [, useIs] = create(() => values);
+const [, useIsEvery] = create(() => values);
+const [, useIsSome] = create(() => values, undefined, { method: "some" });
 
-[
+const tests = [
   {
-    name: "string",
+    param: "string",
     success: ["a", ["a"], ["a", "b"]],
-    fail: ["b", [], ["b"], false],
+    fail: ["b", [], ["b"], true, false],
   },
   {
-    name: "array1",
-    success: ["a", [], ["a"]],
-    fail: ["b", ["b"], ["a", "b"], false],
+    param: "array0",
+    success: [],
+    fail: ["a", "b", ["a"], ["b"], ["a", "b"], true, false],
+    every: {
+      success: [[]],
+      fail: [],
+    },
+    some: {
+      success: [],
+      fail: [[]],
+    },
   },
   {
-    name: "array3",
-    success: ["a", "b", ["a"], [], ["b"], ["a", "b"]],
-    fail: ["x", ["x"], ["a", "x"], false],
+    param: "array1",
+    success: ["a", ["a"]],
+    fail: ["b", ["b"], true, false],
+    every: {
+      success: [[]],
+      fail: [["a", "b"]],
+    },
+    some: {
+      success: [["a", "b"]],
+      fail: [[]],
+    },
   },
   {
-    name: "boolean",
+    param: "array3",
+    success: ["a", "b", ["a"], ["b"], ["a", "b"]],
+    fail: ["x", ["x"], true, false],
+    every: {
+      success: [[]],
+      fail: [["a", "x"]],
+    },
+    some: {
+      success: [["a", "x"]],
+      fail: [[]],
+    },
+  },
+  {
+    param: "boolean",
     success: [true, [true], [false, true], "x", [true, "x"]],
     fail: [false, [false], [], ["x"], [false, "x"]],
   },
-].forEach(({ name, success, fail }) => {
-  success.forEach((condition) =>
-    test(`${name}: ${condition}`, () => {
-      assert(useIs({ [name]: condition }));
-    })
-  );
-  fail.forEach((condition) =>
-    test(`${name}: ${condition}`, () => {
-      assert(!useIs({ [name]: condition }));
-    })
-  );
-});
+];
+
+const methods = [
+  { method: "every", useIs: useIsEvery },
+  { method: "some", useIs: useIsSome },
+];
+
+const outcomes = [
+  { outcome: "success", expect: true },
+  { outcome: "fail", expect: false },
+];
+
+const matrix = methods.flatMap((method) =>
+  outcomes.map((outcome) => ({ ...method, ...outcome }))
+);
+
+matrix
+  .flatMap(({ outcome, method, expect, useIs }) =>
+    tests.map(({ param, ...test }) => ({
+      param,
+      expect,
+      useIs,
+      name: `${method} ${param} (${outcome})`,
+      conditions: [...test[outcome], ...(test[method]?.[outcome] ?? [])],
+    }))
+  )
+  .flatMap(({ conditions, name, param, expect, useIs }) =>
+    conditions.map((condition) => ({
+      name: `${name}: ${JSON.stringify(condition)}`,
+      actual: useIs({ [param]: condition }),
+      expect,
+    }))
+  )
+  .forEach(({ name, actual, expect }) => {
+    test(name, () => {
+      assert.equal(actual, expect);
+    });
+  });

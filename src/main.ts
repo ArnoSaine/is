@@ -48,14 +48,21 @@ type Args =
   | LoaderFunctionArgs;
 
 interface Options {
+  method?: "every" | "some";
+}
+
+interface LoaderOptions extends Options {
   routeId?: string;
   prop?: string;
 }
 
 function __create<V extends Values, C extends Conditions<V>>(
   useValues: () => V,
-  defaultConditions?: C
+  defaultConditions?: C,
+  options: Options = {}
 ) {
+  const { method = "every" } = options;
+
   // Curried comparison function
   const is = curry((values: V, conditions: C | undefined) =>
     Object.entries({
@@ -68,7 +75,7 @@ function __create<V extends Values, C extends Conditions<V>>(
 
         if (Array.isArray(value)) {
           if (Array.isArray(condition)) {
-            return condition.every((condition) => value.includes(condition));
+            return condition[method]((condition) => value.includes(condition));
           }
           return value.includes(condition);
         }
@@ -101,9 +108,10 @@ function __create<V extends Values, C extends Conditions<V>>(
 
 export function create<V extends Values>(
   useValues: () => V,
-  defaultConditions?: Conditions<V>
+  defaultConditions?: Conditions<V>,
+  options: Options = {}
 ) {
-  const { Is, useIs } = __create(useValues, defaultConditions);
+  const { Is, useIs } = __create(useValues, defaultConditions, options);
 
   return [Is, useIs] as const;
 }
@@ -111,14 +119,14 @@ export function create<V extends Values>(
 export function createFromLoader<V extends Values>(
   loadValues: Loader<V>,
   defaultConditions?: Conditions<V>,
-  options: Options = {}
+  options: LoaderOptions = {}
 ) {
   const { routeId = "root", prop = "__is" } = options;
 
   // The hook and the component get values from the root loader
   const useValues = () => useRouteLoaderData<any>(routeId)?.[prop] ?? {};
 
-  const { Is, useIs, is } = __create(useValues, defaultConditions);
+  const { Is, useIs, is } = __create(useValues, defaultConditions, options);
 
   async function loadIs(args: Args) {
     const __values = await loadValues(args);

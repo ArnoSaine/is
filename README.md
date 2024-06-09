@@ -644,6 +644,8 @@ const [IsAuthenticated, useIsAuthenticated] = create(
 
 - `useValues`: A React hook that acquires and computes the current [`values`](#values) for the comparison logic.
 - **optional** `defaultConditions`: The default props/params for [`Is`](#is) and [`useIs`](#useis).
+- **optional** `options`: An options object for configuring the behavior.
+  - **optional** `method` (`"every" | "some"`): Default: `"every"`. Specifies how to match array type values and conditions. Use `"every"` to require all conditions to match the values, or `"some"` to require only some conditions to match.
 
 #### Returns
 
@@ -674,11 +676,12 @@ const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
 
 #### Parameters
 
-- `loadValues`: A React Router / Remix loader that acquires and computes the current `values` for the comparison logic.
+- `loadValues`: A React Router / Remix loader function that acquires and computes the current `values` for the comparison logic.
 - **optional** `defaultConditions`: The default props/params for [`Is`](#is), [`useIs`](#useis) and [`is`](#is-1).
-- **optional** `options`: An options object that can change the property name and route ID.
-  - **optional** `prop`: Default: `"__is"`.
-  - **optional** `routeId`: Default: `"root"`. Example: `"routes/admin"`.
+- **optional** `options`: An options object for configuring the behavior.
+  - **optional** `method` (`"every" | "some"`): Default: `"every"`. Specifies how to match array type values and conditions. Use `"every"` to require all conditions to match the values, or `"some"` to require only some conditions to match.
+  - **optional** `prop`: Default: `"__is"`. The property name in the loader's return value that provides `is.__values`.
+  - **optional** `routeId`: Default: `"root"`. The route that provides the `is.__values` from its loader. Example: `"routes/admin"`.
 
 #### Returns
 
@@ -689,7 +692,7 @@ const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
 #### Props
 
 - `...conditions`: Conditions are merged with the `defaultConditions` and then compared to the [`useValues`](#parameters) / [`loadValues`](#parameters-1) return value. If multiple conditions are given, all must match their corresponding values. For any array-type condition:
-  - If the corresponding value is also an array, the array must include all condition entries.
+  - If the corresponding value is also an array and `options.method` is `"every"` (default), the value array must include all condition entries. If `options.method` is `"some"`, the value array must include at least one of the condition entries. The default will be switched to `"some"` in version `0.2`.
   - If the corresponding value is not an array, the value must be one of the condition entries.
 - **optional** `children`: The UI you intend to render if all conditions match.
 - **optional** `fallback`: The UI you intend to render if some condition does not match.
@@ -709,7 +712,7 @@ const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
 #### Parameters
 
 - `conditions`: Conditions are merged with the `defaultConditions` and then compared to the [`useValues`](#parameters) / [`loadValues`](#parameters-1) return value. If multiple conditions are given, all must match their corresponding values. For any array-type condition:
-  - If the corresponding value is also an array, the array must include all condition entries.
+  - If the corresponding value is also an array and `options.method` is `"every"` (default), the value array must include all condition entries. If `options.method` is `"some"`, the value array must include at least one of the condition entries. The default will be switched to `"some"` in version `0.2`.
   - If the corresponding value is not an array, the value must be one of the condition entries.
 
 #### Returns
@@ -753,7 +756,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
 #### Parameters
 
 - `conditions`: Conditions are merged with the `defaultConditions` and then compared to the [`useValues`](#parameters) / [`loadValues`](#parameters-1) return value. If multiple conditions are given, all must match their corresponding values. For any array-type condition:
-  - If the corresponding value is also an array, the array must include all condition entries.
+  - If the corresponding value is also an array and `options.method` is `"every"` (default), the value array must include all condition entries. If `options.method` is `"some"`, the value array must include at least one of the condition entries. The default will be switched to `"some"` in version `0.2`.
   - If the corresponding value is not an array, the value must be one of the condition entries.
 
 #### Returns
@@ -780,7 +783,7 @@ export const loader = (args: LoaderFunctionArgs) => {
 ### `Value`
 
 - Type `Value` is `boolean | number | string`.
-- It may also be a more specific set of values.
+- It may also be more specific, like a union of `string` values.
 
 #### Example
 
