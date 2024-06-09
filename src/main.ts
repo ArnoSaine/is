@@ -61,7 +61,7 @@ function __create<V extends Values, C extends Conditions<V>>(
   defaultConditions?: C,
   options: Options = {}
 ) {
-  const { method = "every" } = options;
+  const { method = "some" } = options;
 
   // Curried comparison function
   const is = curry((values: V, conditions: C | undefined) =>

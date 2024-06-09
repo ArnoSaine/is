@@ -10,8 +10,8 @@ const values = {
   boolean: true,
 };
 
-const [, useIsEvery] = create(() => values);
-const [, useIsSome] = create(() => values, undefined, { method: "some" });
+const [, useIsSome] = create(() => values);
+const [, useIsEvery] = create(() => values, undefined, { method: "every" });
 
 const tests = [
   {
