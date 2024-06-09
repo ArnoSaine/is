@@ -23,13 +23,13 @@
     "examples/*"
   ],
   "scripts": {
-    "build": "tsc --project tsconfig.build.json",
+    "build": "tsc",
     "build:examples": "./build-examples.sh",
-    "dev": "tsc --project tsconfig.build.json --watch",
+    "dev": "tsc --watch",
     "release": "npm run build && npm test && changeset version && changeset publish",
     "start:examples": "serve public/ --listen 3000",
-    "test": "node --test && tsc",
-    "test:watch": "concurrently \"node --test --watch\" \"tsc --watch\""
+    "test": "node --test && tsc --project tsconfig.test.json",
+    "test:watch": "concurrently \"node --test --watch\" \"tsc --project tsconfig.test.json --watch\""
   },
   "dependencies": {
     "@remix-run/react": "^2.8.1",

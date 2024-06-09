@@ -1,5 +1,5 @@
+import { create } from "@arnosaine/is";
 import React from "react";
-import { create } from "./main";
 
 const [Is] = create(() => ({
   string: "a",
