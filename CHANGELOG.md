@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- ebdd4bd: Change the default method to match array type values and conditions from "every" to "some".
+- ebdd4bd: Change the default method to match array type values and conditions from `"every"` to `"some"`.
 
 ## 0.1.3
 
