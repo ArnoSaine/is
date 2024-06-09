@@ -26,7 +26,7 @@
     "build": "tsc --project tsconfig.build.json",
     "build:examples": "./build-examples.sh",
     "dev": "tsc --project tsconfig.build.json --watch",
-    "release": "npm run build && changeset version && changeset publish",
+    "release": "npm run build && npm test && changeset version && changeset publish",
     "start:examples": "serve public/ --listen 3000",
     "test": "node --test && tsc",
     "test:watch": "concurrently \"node --test --watch\" \"tsc --watch\""
