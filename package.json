@@ -1,6 +1,6 @@
 {
   "name": "@arnosaine/is",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Feature Flags, Roles and Permissions-based rendering, A/B Testing, Experimental Features, and more in React.",
   "homepage": "https://github.com/ArnoSaine/is",
   "repository": {
