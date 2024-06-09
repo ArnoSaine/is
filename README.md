@@ -645,7 +645,7 @@ const [IsAuthenticated, useIsAuthenticated] = create(
 - `useValues`: A React hook that acquires and computes the current [`values`](#values) for the comparison logic.
 - **optional** `defaultConditions`: The default props/params for [`Is`](#is) and [`useIs`](#useis).
 - **optional** `options`: An options object for configuring the behavior.
-  - **optional** `method` (`"every" | "some"`): Default: `"every"`. Specifies how to match array type values and conditions. Use `"every"` to require all conditions to match the values, or `"some"` to require only some conditions to match.
+  - **optional** `method` (`"every" | "some"`): Default: `"some"`. Specifies how to match array type values and conditions. Use `"some"` to require only some conditions to match the values, or `"every"` to require all conditions to match.
 
 #### Returns
 
