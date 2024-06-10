@@ -690,7 +690,7 @@ const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
 - **optional** `options`: An options object for configuring the behavior.
   - **optional** `method` (`"every" | "some"`): Default: `"some"`. Specifies how to match array type values and conditions. Use `"some"` to require only some conditions to match the values, or `"every"` to require all conditions to match.
   - **optional** `prop`: Default: `"__is"`. The property name in the loader's return value that provides `is.__values`.
-  - **optional** `routeId`: Default: `"root"`. The route that provides the `is.__values` from its loader. Example: `"routes/admin"`.
+  - **optional** `routeId`: Default: The root route ID (`"root"` or `"0"`). The route that provides the `is.__values` from its loader. Example: `"routes/admin"`.
 
 #### Returns
 

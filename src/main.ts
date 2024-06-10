@@ -1,11 +1,8 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import {
-  ClientActionFunctionArgs,
-  ClientLoaderFunctionArgs,
-  useRouteLoaderData,
-} from "@remix-run/react";
+import type * as RemixNode from "@remix-run/node";
 import { curry } from "lodash-es";
 import { ReactNode } from "react";
+import type * as ReactRouter from "react-router";
+import { useMatches, useRouteLoaderData } from "react-router";
 
 export * from "./utils.js";
 
@@ -44,10 +41,10 @@ type Values<Value = unknown> = {
 type Loader<Values> = (args: Args) => Values | Promise<Values>;
 
 type Args =
-  | ClientActionFunctionArgs
-  | ActionFunctionArgs
-  | ClientLoaderFunctionArgs
-  | LoaderFunctionArgs;
+  | ReactRouter.ActionFunctionArgs
+  | ReactRouter.LoaderFunctionArgs
+  | RemixNode.ActionFunctionArgs
+  | RemixNode.LoaderFunctionArgs;
 
 interface Options {
   method?: "every" | "some";
@@ -123,10 +120,15 @@ export function createFromLoader<V extends Values>(
   defaultConditions?: Conditions<V>,
   options: LoaderOptions = {}
 ) {
-  const { routeId = "root", prop = "__is" } = options;
+  const { prop = "__is" } = options;
 
   // The hook and the component get values from the root loader
-  const useValues = () => useRouteLoaderData<any>(routeId)?.[prop] ?? {};
+  const useValues = () => {
+    const root = useMatches()[0];
+    const { routeId = root?.id ?? "root" } = options;
+
+    return (useRouteLoaderData(routeId) as any)?.[prop] ?? {};
+  };
 
   const { Is, useIs, is } = __create(useValues, defaultConditions, options);
 
