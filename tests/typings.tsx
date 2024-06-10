@@ -1,4 +1,4 @@
-import { create } from "@arnosaine/is";
+import { create, toBooleanValues } from "@arnosaine/is";
 import React from "react";
 
 const [Is] = create(() => ({
@@ -116,3 +116,5 @@ const unknownBoolean = false as const;
 
 // @ts-expect-error
 <Is unknown />;
+
+toBooleanValues(["a", "b", "c"] as const);

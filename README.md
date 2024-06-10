@@ -10,7 +10,7 @@
 
 [Create](#create-is--useis) a custom [`<Is>`](#is) component and [`useIs`](#useis) hook for any conditional rendering use cases.
 
-Or create [shortcut components](#shortcut-components-and-hooks) like `<IsAuthenticated>` and `<HasRole>`, and hooks like `useIsAuthenticated` and `useHasRole`, for the most common use cases.
+Or create [shortcut components](#shortcut-components-and-hooks) like `<IsAuthenticated>`, `<HasRole>` / `<Role>` and `<HasPermission>` / `<Can>`, and hooks like `useIsAuthenticated`, `useHasRole` / `useRole` and `useHasPermission` / `useCan`, for the most common use cases.
 
 If you are using React Router or Remix, use [`createFromLoader`](#setup) to also create [`loadIs`](#loadis) loader and utility functions like [`authenticated`](#utilities).
 
@@ -35,7 +35,7 @@ If you are using React Router or Remix, use [`createFromLoader`](#setup) to also
   - [Is a Specific Day](#is-a-specific-day)
     - [Usage](#usage-3)
   - [Shortcut Components and Hooks](#shortcut-components-and-hooks)
-    - [Usage](#usage-4)
+    - [For a Very Specific Use Case](#for-a-very-specific-use-case)
 - [Loader (React Router / Remix)](#loader-react-router--remix)
   - [Setup](#setup)
   - [Using `loadIs`](#using-loadis)
@@ -47,6 +47,7 @@ If you are using React Router or Remix, use [`createFromLoader`](#setup) to also
   - [`useIs`](#useis)
   - [`loadIs`](#loadis)
   - [`is`](#is-1)
+  - [`toBooleanValues`](#tobooleanvalues)
 - [Types](#types)
   - [`Value`](#value)
   - [`Values`](#values)
@@ -406,12 +407,10 @@ const isEaster = useIs({ easter: true });
 
 ### Shortcut Components and Hooks
 
-`./is.ts`:
-
 ```tsx
 import { create } from "@arnosaine/is";
 import { use } from "react";
-import UserContext, { Permission, Role } from "./UserContext";
+import UserContext from "./UserContext";
 
 const [IsAuthenticated, useIsAuthenticated] = create(
   function useValues() {
@@ -422,19 +421,43 @@ const [IsAuthenticated, useIsAuthenticated] = create(
   { authenticated: true } // Default props / hook params
 );
 
-export { IsAuthenticated, useIsAuthenticated };
+<IsAuthenticated fallback="Please log in">Welcome back!</IsAuthenticated>;
+
+const isAuthenticated = useIsAuthenticated();
+```
+
+```tsx
+import { create, toBooleanValues } from "@arnosaine/is";
+import { use } from "react";
+import UserContext from "./UserContext";
 
 const [HasRole, useHasRole] = create(function useValues() {
   const user = use(UserContext);
 
   // Create object { [role: string]: true }
-  return Object.fromEntries(
-    (user?.roles ?? []).map((role) => [role, true])
-  ) as Record<Role, true>;
-  // Record<"admin" | ..., true >;
+  return Object.fromEntries((user?.roles ?? []).map((role) => [role, true]));
 });
 
-export { HasRole, useHasRole };
+<HasRole admin>
+  <AdminPanel />
+</HasRole>;
+
+const isAdmin = useHasRole({ admin: true });
+
+// Same with toBooleanValues utility
+const [Role, useRole] = create(() => toBooleanValues(use(UserContext)?.roles));
+
+<Role admin>
+  <AdminPanel />
+</Role>;
+
+const isAdmin = useRole({ admin: true });
+```
+
+```tsx
+import { create, toBooleanValues } from "@arnosaine/is";
+import { use } from "react";
+import UserContext from "./UserContext";
 
 const [HasPermission, useHasPermission] = create(function useValues() {
   const user = use(UserContext);
@@ -442,13 +465,34 @@ const [HasPermission, useHasPermission] = create(function useValues() {
   // Create object { [permission: string]: true }
   return Object.fromEntries(
     (user?.permissions ?? []).map((permission) => [permission, true])
-  ) as Record<Permission, true>;
-  // Record<"create-articles" | "read-articles" | ..., true >
+  );
 });
 
-export { HasPermission, useHasPermission };
+<HasPermission update-articles>
+  <button>Edit</button>
+</HasPermission>;
 
-// For a very specific use case
+const canUpdateArticles = useHasPermission({ "update-articles": true });
+
+// Same with toBooleanValues utility
+const [Can, useCan] = create(() =>
+  toBooleanValues(use(UserContext)?.permissions)
+);
+
+<Can update-articles>
+  <button>Edit</button>
+</Can>;
+
+const canUpdateArticles = useCan({ "update-articles": true });
+```
+
+#### For a Very Specific Use Case
+
+```tsx
+import { create } from "@arnosaine/is";
+import { use } from "react";
+import UserContext from "./UserContext";
+
 const [CanUpdateArticles, useCanUpdateArticles] = create(
   function useValues() {
     const user = use(UserContext);
@@ -460,45 +504,10 @@ const [CanUpdateArticles, useCanUpdateArticles] = create(
   { updateArticles: true } // Default props / hook params
 );
 
-export { CanUpdateArticles, useCanUpdateArticles };
-```
-
-#### Usage
-
-```tsx
-import {
-  HasPermission,
-  HasRole,
-  IsAuthenticated,
-  useHasPermission,
-  useHasRole,
-  useIsAuthenticated,
-  // For a very specific use case
-  CanUpdateArticles,
-  useCanUpdateArticles,
-} from "./is";
-
-// Components
-
-<IsAuthenticated fallback="Please log in">Welcome back!</IsAuthenticated>;
-
-<HasRole admin>
-  <AdminPanel />
-</HasRole>;
-
-<HasPermission update-articles>
-  <button>Edit</button>
-</HasPermission>;
-
 <CanUpdateArticles>
   <button>Edit</button>
 </CanUpdateArticles>;
 
-// Hooks
-
-const isAuthenticated = useIsAuthenticated();
-const isAdmin = useHasRole({ admin: true });
-const canUpdateArticles = useHasPermission({ "update-articles": true });
 const canUpdateArticles = useCanUpdateArticles();
 ```
 
@@ -676,7 +685,7 @@ const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
 
 #### Parameters
 
-- `loadValues`: A React Router / Remix loader function that acquires and computes the current `values` for the comparison logic.
+- `loadValues`: A React Router / Remix loader function that acquires and computes the current [`values`](#values) for the comparison logic.
 - **optional** `defaultConditions`: The default props/params for [`Is`](#is), [`useIs`](#useis) and [`is`](#is-1).
 - **optional** `options`: An options object for configuring the behavior.
   - **optional** `method` (`"every" | "some"`): Default: `"some"`. Specifies how to match array type values and conditions. Use `"some"` to require only some conditions to match the values, or `"every"` to require all conditions to match.
@@ -777,6 +786,29 @@ export const loader = (args: LoaderFunctionArgs) => {
   };
 };
 ```
+
+### `toBooleanValues`
+
+Call `toBooleanValues` to convert an array of strings to an object with `true` values.
+
+```ts
+const permissionList = [
+  "create-articles",
+  "read-articles",
+  "update-articles",
+  "delete-articles",
+];
+const permissionValues = toBooleanValues(permissions);
+// { "create-articles": true, "read-articles": true, ... }
+```
+
+#### Parameters
+
+- **optional** `strings`: An array of strings.
+
+#### Returns
+
+`toBooleanValues` returns an object with `true` values.
 
 ## Types
 

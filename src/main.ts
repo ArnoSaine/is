@@ -7,6 +7,8 @@ import {
 import { curry } from "lodash-es";
 import { ReactNode } from "react";
 
+export * from "./utils.js";
+
 type Flatten<Type> = Type extends Array<infer Item> ? Item : Type;
 type Unflatten<Type> = Type extends Array<infer Item> ? Item[] : Type[];
 type Boolean<T> = T extends boolean ? T : never;

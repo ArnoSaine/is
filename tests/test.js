@@ -1,4 +1,4 @@
-import { create } from "@arnosaine/is";
+import { create, toBooleanValues } from "@arnosaine/is";
 import { strict as assert } from "node:assert";
 import test from "node:test";
 
@@ -101,3 +101,12 @@ matrix
       assert.equal(actual, expect);
     });
   });
+
+test(() => {
+  assert.deepEqual(toBooleanValues(), {});
+  assert.deepEqual(toBooleanValues(["a", "b", "c"]), {
+    a: true,
+    b: true,
+    c: true,
+  });
+});
