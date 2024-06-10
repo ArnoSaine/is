@@ -1,6 +1,12 @@
 rm -rf public/is
 
-cd examples/remix-project
+cd examples/react-router-project
+
+BASENAME=/is/react-router-project npm run build
+mkdir -p ../../public/is/react-router-project
+mv dist/* ../../public/is/react-router-project
+
+cd ../remix-project
 
 BASENAME=/is/remix-project npm run build
 mkdir -p ../../public/is/remix-project

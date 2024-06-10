@@ -55,6 +55,7 @@ If you are using React Router or Remix, use [`createFromLoader`](#setup) to also
 
 ## Demos
 
+- [React Router](https://arnosaine.github.io/is/react-router-project/)
 - [Remix](https://arnosaine.github.io/is/remix-project/)
 - [Vite](https://arnosaine.github.io/is/vite-project/)
 

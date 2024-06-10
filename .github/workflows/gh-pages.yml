@@ -40,6 +40,16 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Build React Router
+        working-directory: examples/react-router-project
+        run: npm run build
+        env:
+          BASENAME: /is/react-router-project
+      - name: Add files to /public
+        run: |
+          mkdir -p public/react-router-project
+          mv examples/react-router-project/dist/* public/react-router-project
+
       - name: Build Remix
         working-directory: examples/remix-project
         run: npm run build
