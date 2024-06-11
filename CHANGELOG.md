@@ -1,5 +1,13 @@
 # @arnosaine/is
 
+## 0.2.2
+
+### Patch Changes
+
+- 0b9bb54: Fix React Router compatibility
+
+  - Change dependency from `@remix-run/react` to `react-router`
+
 ## 0.2.1
 
 ### Patch Changes
