@@ -32,8 +32,8 @@
     "test:watch": "concurrently \"node --test --watch\" \"tsc --project tsconfig.test.json --watch\""
   },
   "dependencies": {
-    "react-router": "^6.23.1",
-    "lodash-es": "^4.17.21"
+    "lodash-es": "^4.17.21",
+    "react-router": "^6.23.1"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.3",
