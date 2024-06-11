@@ -65,7 +65,7 @@ const router = createBrowserRouter(
     ...routes,
   ],
   {
-    basename: (import.meta.env.BASENAME ?? "") + "/",
+    basename: import.meta.env.BASE_URL,
   }
 );
 
