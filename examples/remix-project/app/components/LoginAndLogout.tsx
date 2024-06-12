@@ -6,7 +6,7 @@ export default function LoginAndLogout() {
   const action = useIs({ authenticated: true }) ? "/logout" : "/login";
 
   return (
-    <Form action={action} method="POST" style={{ display: "inline" }}>
+    <Form action={action} method="POST">
       <Is
         authenticated
         fallback={
