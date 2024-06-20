@@ -1,5 +1,11 @@
 # @arnosaine/is
 
+## 0.2.3
+
+### Patch Changes
+
+- d6a965e: Add package.json keywords
+
 ## 0.2.2
 
 ### Patch Changes
