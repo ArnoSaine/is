@@ -2,6 +2,20 @@
   "name": "@arnosaine/is",
   "version": "0.2.2",
   "description": "Feature Flags, Roles and Permissions-based rendering, A/B Testing, Experimental Features, and more in React.",
+  "keywords": [
+    "react",
+    "conditional-rendering",
+    "feature-flags",
+    "authentication",
+    "permissions",
+    "conditional-logic",
+    "remix",
+    "react-router",
+    "dynamic-content",
+    "a/b-testing",
+    "role-based-access-control",
+    "rbac"
+  ],
   "homepage": "https://github.com/ArnoSaine/is",
   "repository": {
     "type": "git",
