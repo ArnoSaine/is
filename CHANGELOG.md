@@ -1,5 +1,11 @@
 # @arnosaine/is
 
+## 0.2.4
+
+### Patch Changes
+
+- 435b0e0: Add support for `ClientActionFunctionArgs` & `ClientLoaderFunctionArgs` types
+
 ## 0.2.3
 
 ### Patch Changes
