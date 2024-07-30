@@ -1,5 +1,8 @@
-import { create, toBooleanValues } from "@arnosaine/is";
+import { create, createFromLoader, toBooleanValues } from "@arnosaine/is";
+import type * as RemixNode from "@remix-run/node";
+import type * as RemixReact from "@remix-run/react";
 import React from "react";
+import type * as ReactRouter from "react-router";
 
 const [Is] = create(() => ({
   string: "a",
@@ -18,6 +21,29 @@ create(() => ({
   // @ts-expect-error
   fallback: <></>,
 }));
+
+const routerAction = (_args: ReactRouter.ActionFunctionArgs) => {};
+const routerLoader = (_args: ReactRouter.LoaderFunctionArgs) => {};
+const action = (_args: RemixNode.ActionFunctionArgs) => {};
+const loader = (_args: RemixNode.LoaderFunctionArgs) => {};
+const clientAction = (_args: RemixReact.ClientActionFunctionArgs) => {};
+const clientLoader = (_args: RemixReact.ClientLoaderFunctionArgs) => {};
+const error = (_args: number) => {};
+
+createFromLoader((args) => {
+  new URL(args.request.url);
+
+  routerAction(args);
+  routerLoader(args);
+  action(args);
+  loader(args);
+  clientAction(args);
+  clientLoader(args);
+  // @ts-expect-error
+  error(args);
+
+  return {};
+});
 
 <Is />;
 <Is>children</Is>;

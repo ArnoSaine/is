@@ -1,4 +1,5 @@
 import type * as RemixNode from "@remix-run/node";
+import type * as RemixReact from "@remix-run/react";
 import { curry } from "lodash-es";
 import { ReactNode } from "react";
 import type * as ReactRouter from "react-router";
@@ -38,13 +39,21 @@ type Values<Value = unknown> = {
   [key: string]: Value;
 } & Never<ElementProps>;
 
-type Loader<Values> = (args: Args) => Values | Promise<Values>;
+type Loader<Values> = (args: ExtendedArgs) => Values | Promise<Values>;
 
 type Args =
   | ReactRouter.ActionFunctionArgs
   | ReactRouter.LoaderFunctionArgs
   | RemixNode.ActionFunctionArgs
-  | RemixNode.LoaderFunctionArgs;
+  | RemixNode.LoaderFunctionArgs
+  | RemixReact.ClientActionFunctionArgs
+  | RemixReact.ClientLoaderFunctionArgs;
+
+type ExtendedArgs = Args & {
+  serverAction: <T = unknown>() => Promise<RemixNode.SerializeFrom<T>>;
+  serverLoader: <T = unknown>() => Promise<RemixNode.SerializeFrom<T>>;
+  context: any;
+};
 
 interface Options {
   method?: "every" | "some";
@@ -133,7 +142,7 @@ export function createFromLoader<V extends Values>(
   const { Is, useIs, is } = __create(useValues, defaultConditions, options);
 
   async function loadIs(args: Args) {
-    const __values = await loadValues(args);
+    const __values = await loadValues(args as any);
 
     return Object.assign(is(__values), { __values });
   }
