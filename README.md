@@ -522,7 +522,6 @@ const canUpdateArticles = useCanUpdateArticles();
 
    ```tsx
    import { createFromLoader } from "@arnosaine/is";
-   import { LoaderFunctionArgs } from "@remix-run/node";
    import { loadConfig, loadUser } from "./loaders";
 
    const [Is, useIs, loadIs] = createFromLoader(async (args) => {
