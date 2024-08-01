@@ -1,5 +1,11 @@
 # @arnosaine/is
 
+## 0.2.5
+
+### Patch Changes
+
+- 921033b: Update `react-router` version range from `^6.23.1` to `^6.0.0`
+
 ## 0.2.4
 
 ### Patch Changes
