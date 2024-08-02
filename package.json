@@ -1,6 +1,6 @@
 {
   "name": "@arnosaine/is",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Feature Flags, Roles and Permissions-based rendering, A/B Testing, Experimental Features, and more in React.",
   "keywords": [
     "react",
