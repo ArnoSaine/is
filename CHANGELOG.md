@@ -1,5 +1,11 @@
 # @arnosaine/is
 
+## 0.2.6
+
+### Patch Changes
+
+- 0bfb726: Fix interpretation of array condition type, for example: `["foo", "bar"]` when value type is `"foo" | "bar"`
+
 ## 0.2.5
 
 ### Patch Changes
