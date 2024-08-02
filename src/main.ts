@@ -28,6 +28,7 @@ interface ElementProps {
 
 type Condition<Value> =
   | Flatten<Boolean<Value> | NonBoolean<Writeable<Value>>>
+  | NonBoolean<Flatten<Value>>[]
   | Unflatten<NonBoolean<Writeable<Value>>>;
 
 type Conditions<Values> = Partial<{
@@ -83,7 +84,7 @@ function __create<V extends Values, C extends Conditions<V>>(
 
         if (Array.isArray(value)) {
           if (Array.isArray(condition)) {
-            return condition[method]((condition) => value.includes(condition));
+            return condition[method]((cond) => value.includes(cond));
           }
           return value.includes(condition);
         }

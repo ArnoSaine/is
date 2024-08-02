@@ -7,6 +7,7 @@ import type * as ReactRouter from "react-router";
 const [Is] = create(() => ({
   string: "a",
   stringConst: "a" as const,
+  stringConstB: "a" as "a" | "b" | "c",
   array1: ["a"],
   array1Const: ["a"] as const,
   array3: ["a", "b", "c"],
@@ -53,7 +54,9 @@ createFromLoader((args) => {
 const knownString = "a" as const;
 const unknownString = "x" as const;
 const knownArray = ["a"] as const;
+const knownArrayB = ["a", "b"] as const;
 const unknownArray = ["x"] as const;
+const unknownArrayB = ["a", "x"] as const;
 const knownBoolean = true as const;
 const unknownBoolean = false as const;
 
@@ -75,7 +78,25 @@ const unknownBoolean = false as const;
 <Is stringConst={unknownBoolean} />;
 <Is stringConst={knownArray} />;
 // @ts-expect-error
+<Is stringConst={knownArrayB} />;
+// @ts-expect-error
 <Is stringConst={unknownArray} />;
+// @ts-expect-error
+<Is stringConst={unknownArrayB} />;
+
+<Is stringConstB={knownString} />;
+// @ts-expect-error
+<Is stringConstB={unknownString} />;
+// @ts-expect-error
+<Is stringConstB={knownBoolean} />;
+// @ts-expect-error
+<Is stringConstB={unknownBoolean} />;
+<Is stringConstB={knownArray} />;
+<Is stringConstB={knownArrayB} />;
+// @ts-expect-error
+<Is stringConstB={unknownArray} />;
+// @ts-expect-error
+<Is stringConstB={unknownArrayB} />;
 
 <Is array1={knownString} />;
 <Is array1={unknownString} />;
@@ -84,7 +105,9 @@ const unknownBoolean = false as const;
 // @ts-expect-error
 <Is array1={unknownBoolean} />;
 <Is array1={knownArray} />;
+<Is array1={knownArrayB} />;
 <Is array1={unknownArray} />;
+<Is array1={unknownArrayB} />;
 
 <Is array1Const={knownString} />;
 // @ts-expect-error
@@ -95,7 +118,11 @@ const unknownBoolean = false as const;
 <Is array1Const={unknownBoolean} />;
 <Is array1Const={knownArray} />;
 // @ts-expect-error
+<Is array1Const={knownArrayB} />;
+// @ts-expect-error
 <Is array1Const={unknownArray} />;
+// @ts-expect-error
+<Is array1Const={unknownArrayB} />;
 
 <Is array3={knownString} />;
 <Is array3={unknownString} />;
@@ -104,7 +131,9 @@ const unknownBoolean = false as const;
 // @ts-expect-error
 <Is array3={unknownBoolean} />;
 <Is array3={knownArray} />;
+<Is array3={knownArrayB} />;
 <Is array3={unknownArray} />;
+<Is array3={unknownArrayB} />;
 
 <Is array3Const={knownString} />;
 // @ts-expect-error
@@ -114,8 +143,11 @@ const unknownBoolean = false as const;
 // @ts-expect-error
 <Is array3Const={unknownBoolean} />;
 <Is array3Const={knownArray} />;
+<Is array3Const={knownArrayB} />;
 // @ts-expect-error
 <Is array3Const={unknownArray} />;
+// @ts-expect-error
+<Is array3Const={unknownArrayB} />;
 
 // @ts-expect-error
 <Is boolean={knownString} />;
@@ -127,6 +159,12 @@ const unknownBoolean = false as const;
 <Is boolean={knownString} />;
 // @ts-expect-error
 <Is boolean={knownArray} />;
+// @ts-expect-error
+<Is boolean={knownArrayB} />;
+// @ts-expect-error
+<Is boolean={unknownArray} />;
+// @ts-expect-error
+<Is boolean={unknownArrayB} />;
 
 // @ts-expect-error
 <Is booleanConst={knownString} />;
@@ -139,6 +177,12 @@ const unknownBoolean = false as const;
 <Is booleanConst={knownString} />;
 // @ts-expect-error
 <Is booleanConst={knownArray} />;
+// @ts-expect-error
+<Is booleanConst={knownArray3} />;
+// @ts-expect-error
+<Is booleanConst={unknownArray} />;
+// @ts-expect-error
+<Is booleanConst={unknownArray3} />;
 
 // @ts-expect-error
 <Is unknown />;
