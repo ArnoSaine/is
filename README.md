@@ -587,7 +587,6 @@ export const loader = (args: LoaderFunctionArgs) => {
 
 ```tsx
 import { loaderFunctionArgs } from "@remix-run/node";
-import { allowed, authorized } from "utils/response";
 import { loadIs } from "./is";
 
 export const authenticated = async (
