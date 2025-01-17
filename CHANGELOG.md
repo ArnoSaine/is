@@ -1,5 +1,11 @@
 # @arnosaine/is
 
+## 0.2.7
+
+### Patch Changes
+
+- 021eb32: Upgrade to `react-router@^7.0.0`
+
 ## 0.2.6
 
 ### Patch Changes
