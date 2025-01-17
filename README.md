@@ -549,7 +549,7 @@ const canUpdateArticles = useCanUpdateArticles();
    ```tsx
    import { loadIs } from "./is";
 
-   export const loader = (args: LoaderFunctionArgs) => {
+   export const loader = async (args: LoaderFunctionArgs) => {
      const is = await loadIs(args);
 
      return {
