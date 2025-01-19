@@ -25,6 +25,8 @@ create(() => ({
 
 const routerAction = (_args: ReactRouter.ActionFunctionArgs) => {};
 const routerLoader = (_args: ReactRouter.LoaderFunctionArgs) => {};
+const routerClientAction = (_args: ReactRouter.ClientActionFunctionArgs) => {};
+const routerClientLoader = (_args: ReactRouter.ClientLoaderFunctionArgs) => {};
 const action = (_args: RemixNode.ActionFunctionArgs) => {};
 const loader = (_args: RemixNode.LoaderFunctionArgs) => {};
 const clientAction = (_args: RemixReact.ClientActionFunctionArgs) => {};
@@ -36,6 +38,8 @@ createFromLoader((args) => {
 
   routerAction(args);
   routerLoader(args);
+  routerClientAction(args);
+  routerClientLoader(args);
   action(args);
   loader(args);
   clientAction(args);

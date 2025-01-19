@@ -40,19 +40,23 @@ type Values<Value = unknown> = {
   [key: string]: Value;
 } & Never<ElementProps>;
 
-type Loader<Values> = (args: ExtendedArgs) => Values | Promise<Values>;
+type Loader<Values> = (
+  args: ExtendedDataFunctionArgs
+) => Values | Promise<Values>;
 
-type Args =
+type DataFunctionArgs =
   | ReactRouter.ActionFunctionArgs
   | ReactRouter.LoaderFunctionArgs
+  | ReactRouter.ClientActionFunctionArgs
+  | ReactRouter.ClientLoaderFunctionArgs
   | RemixNode.ActionFunctionArgs
   | RemixNode.LoaderFunctionArgs
   | RemixReact.ClientActionFunctionArgs
   | RemixReact.ClientLoaderFunctionArgs;
 
-type ExtendedArgs = Args & {
-  serverAction: <T = unknown>() => Promise<RemixNode.SerializeFrom<T>>;
-  serverLoader: <T = unknown>() => Promise<RemixNode.SerializeFrom<T>>;
+type ExtendedDataFunctionArgs = DataFunctionArgs & {
+  serverAction: any;
+  serverLoader: any;
   context: any;
 };
 
@@ -142,7 +146,7 @@ export function createFromLoader<V extends Values>(
 
   const { Is, useIs, is } = __create(useValues, defaultConditions, options);
 
-  async function loadIs(args: Args) {
+  async function loadIs(args: DataFunctionArgs) {
     const __values = await loadValues(args as any);
 
     return Object.assign(is(__values), { __values });
