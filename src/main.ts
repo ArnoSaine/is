@@ -4,22 +4,29 @@ import { curry } from "lodash-es";
 import { ReactNode } from "react";
 import type * as ReactRouter from "react-router";
 import { useMatches, useRouteLoaderData } from "react-router";
+import {
+  Boolean,
+  Flatten,
+  HasUnknownKeys,
+  Never,
+  NonBoolean,
+  Unflatten,
+  Writeable,
+} from "./utils.js";
 
 export * from "./utils.js";
 
-type Flatten<Type> = Type extends Array<infer Item> ? Item : Type;
-type Unflatten<Type> = Type extends Array<infer Item> ? Item[] : Type[];
-type Boolean<T> = T extends boolean ? T : never;
-type NonBoolean<T> = T extends boolean ? never : T;
-type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 type Merge<A, B> = {
   [K in keyof A | keyof B]:
     | (K extends keyof A ? A[K] : never)
     | (K extends keyof B ? B[K] : never);
 };
-type Never<T> = {
-  [P in keyof T]: never;
-};
+
+// Workaround for typing unknown property (condition) names, e.g.
+// role names as boolean props.
+type HandleUnknownKeys<Conditions> = HasUnknownKeys<Conditions> extends true
+  ? any // Has unknown properties
+  : Conditions; // Only known properties
 
 interface ElementProps {
   children?: ReactNode;
@@ -113,7 +120,7 @@ function __create<V extends Values, C extends Conditions<V>>(
     children = null,
     fallback = null,
     ...conditions
-  }: Partial<Merge<ElementProps, C>>) =>
+  }: Partial<Merge<ElementProps, HandleUnknownKeys<C>>>) =>
     useIs(conditions as C) ? children : fallback;
 
   return { Is, useIs, is };

@@ -1,10 +1,15 @@
-import { create, createFromLoader, toBooleanValues } from "@arnosaine/is";
 import type * as RemixNode from "@remix-run/node";
-import type * as RemixReact from "@remix-run/react";
-import React from "react";
+import * as RemixReact from "@remix-run/react";
+import React, { ReactNode } from "react";
 import type * as ReactRouter from "react-router";
+import {
+  create,
+  createFromLoader,
+  HasUnknownKeys,
+  toBooleanValues,
+} from "../src/main";
 
-const [Is] = create(() => ({
+const [Is] = createFromLoader(() => ({
   string: "a",
   stringConst: "a" as const,
   stringConstB: "a" as "a" | "b" | "c",
@@ -51,9 +56,16 @@ createFromLoader((args) => {
 });
 
 <Is />;
-<Is>children</Is>;
-<Is fallback="fallback" />;
-<Is fallback="fallback">children</Is>;
+<Is>
+  <></>
+</Is>;
+<Is fallback={<></>} />;
+<Is fallback={<></>}>
+  <></>
+</Is>;
+<Is string="foo" fallback={<></>}>
+  <></>
+</Is>;
 
 const knownString = "a" as const;
 const unknownString = "x" as const;
@@ -192,3 +204,43 @@ const unknownBoolean = false as const;
 <Is unknown />;
 
 toBooleanValues(["a", "b", "c"] as const);
+
+let unknownValueName = "boolean";
+
+const [Has] = createFromLoader(() => ({
+  [unknownValueName]: true,
+}));
+
+<Has />;
+<Has>
+  <></>
+</Has>;
+<Has fallback={<></>} />;
+<Has fallback={<></>}>
+  <></>
+</Has>;
+<Has unknown />;
+<Has unknown>
+  <></>
+</Has>;
+<Has unknown fallback={<></>} />;
+<Has unknown fallback={<></>}>
+  <></>
+</Has>;
+
+type ObjectWithKnownKeys = { x: boolean };
+type ObjectWithUnknownKeys = { [x: string]: boolean };
+
+const a: HasUnknownKeys<ObjectWithKnownKeys> = false;
+const b: HasUnknownKeys<ObjectWithUnknownKeys> = true;
+
+// @ts-expect-error
+const props: {
+  [key: string]: boolean;
+  // @ts-expect-error
+  children: //
+  ReactNode;
+} = {
+  x: true,
+  children: <></>,
+};
