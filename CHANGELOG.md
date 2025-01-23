@@ -1,5 +1,16 @@
 # @arnosaine/is
 
+## 0.2.8
+
+### Patch Changes
+
+- a666bea: Add type support for ClientActionFunctionArgs and ClientLoaderFunctionArgs from React Router v7
+- d5f39b1: - Cleaner syntax to provide values from the root loader:
+  - ~~`return {__is: is.__values /* other loader data */ };`~~
+  - New: `return { ...is /* other loader data */ };`
+  - **Deprecation**: `is.__values` and `__is` property in the root loader data. Use `...is` or `__is_values: is.__is_values` instead.
+- e55e957: Workaround for typing unknown property (condition) names, e.g. role names as boolean props
+
 ## 0.2.7
 
 ### Patch Changes
