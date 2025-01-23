@@ -231,16 +231,23 @@ const [Has] = createFromLoader(() => ({
 type ObjectWithKnownKeys = { x: boolean };
 type ObjectWithUnknownKeys = { [x: string]: boolean };
 
-const a: HasUnknownKeys<ObjectWithKnownKeys> = false;
-const b: HasUnknownKeys<ObjectWithUnknownKeys> = true;
+function test<T>(x: T) {
+  return x;
+}
 
-// @ts-expect-error
-const props: {
+test<HasUnknownKeys<ObjectWithKnownKeys>>(false);
+test<HasUnknownKeys<ObjectWithUnknownKeys>>(true);
+
+type Props = {
   [key: string]: boolean;
   // @ts-expect-error
   children: //
   ReactNode;
-} = {
+};
+// @ts-expect-error
+const props: Props = {
   x: true,
   children: <></>,
 };
+
+test<Props>(props);
