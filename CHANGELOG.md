@@ -1,5 +1,11 @@
 # @arnosaine/is
 
+## 0.2.9
+
+### Patch Changes
+
+- e2490f0: Fix children and fallback prop types of components with unknown condition names, e.g. role names
+
 ## 0.2.8
 
 ### Patch Changes
