@@ -8,6 +8,7 @@ import {
   Boolean,
   Flatten,
   HasUnknownKeys,
+  Merge,
   Never,
   NonBoolean,
   Unflatten,
@@ -16,42 +17,36 @@ import {
 
 export * from "./utils.js";
 
-type Merge<A, B> = {
-  [K in keyof A | keyof B]:
-    | (K extends keyof A ? A[K] : never)
-    | (K extends keyof B ? B[K] : never);
-};
-
 // Workaround for typing unknown property (condition) names, e.g.
 // role names as boolean props.
 type HandleUnknownKeys<Conditions> = HasUnknownKeys<Conditions> extends true
   ? any // Has unknown properties
   : Conditions; // Only known properties
 
-interface ElementProps {
+export interface ElementProps {
   children?: ReactNode;
   fallback?: ReactNode;
 }
 
-type Condition<Value> =
+export type Condition<Value> =
   | Flatten<Boolean<Value> | NonBoolean<Writeable<Value>>>
   | NonBoolean<Flatten<Value>>[]
   | Unflatten<NonBoolean<Writeable<Value>>>;
 
-type Conditions<Values> = Partial<{
+export type Conditions<Values> = Partial<{
   [P in keyof Values]: Readonly<Condition<Values[P]>>;
 }> &
   Never<ElementProps>;
 
-type Values<Value = unknown> = {
+export type Values<Value = unknown> = {
   [key: string]: Value;
 } & Never<ElementProps>;
 
-type Loader<Values> = (
+export type Loader<Values> = (
   args: ExtendedDataFunctionArgs
 ) => Values | Promise<Values>;
 
-type DataFunctionArgs =
+export type DataFunctionArgs =
   | ReactRouter.ActionFunctionArgs
   | ReactRouter.LoaderFunctionArgs
   | ReactRouter.ClientActionFunctionArgs
@@ -61,22 +56,22 @@ type DataFunctionArgs =
   | RemixReact.ClientActionFunctionArgs
   | RemixReact.ClientLoaderFunctionArgs;
 
-type ExtendedDataFunctionArgs = DataFunctionArgs & {
+export type ExtendedDataFunctionArgs = DataFunctionArgs & {
   serverAction: any;
   serverLoader: any;
   context: any;
 };
 
-interface Options {
+export interface Options {
   method?: "every" | "some";
 }
 
-interface LoaderOptions extends Options {
+export interface LoaderOptions extends Options {
   routeId?: string;
   prop?: string;
 }
 
-function __create<V extends Values, C extends Conditions<V>>(
+export function __create<V extends Values, C extends Conditions<V>>(
   useValues: () => V,
   defaultConditions?: C,
   options: Options = {}

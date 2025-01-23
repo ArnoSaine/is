@@ -9,14 +9,21 @@ import {
   toBooleanValues,
 } from "../src/main";
 
+function test<T>(x: T) {
+  return x;
+}
+
+const array3 = ["a", "b", "c"];
+const array3Const = ["a", "b", "c"] as const;
+
 const [Is] = createFromLoader(() => ({
   string: "a",
   stringConst: "a" as const,
   stringConstB: "a" as "a" | "b" | "c",
   array1: ["a"],
   array1Const: ["a"] as const,
-  array3: ["a", "b", "c"],
-  array3Const: ["a", "b", "c"] as const,
+  array3,
+  array3Const,
   boolean: true,
   booleanConst: true as const,
 }));
@@ -203,7 +210,13 @@ const unknownBoolean = false as const;
 // @ts-expect-error
 <Is unknown />;
 
-toBooleanValues(["a", "b", "c"] as const);
+test<Record<string, true>>(toBooleanValues(array3));
+test<Record<string, true>>(toBooleanValues(array3Const));
+test<Record<"a" | "b" | "c", true>>(toBooleanValues(array3));
+test<Record<"a" | "b" | "c", true>>(toBooleanValues(array3Const));
+test<Record<"x", true>>(toBooleanValues(array3));
+// @ts-expect-error
+test<Record<"x", true>>(toBooleanValues(array3Const));
 
 let unknownValueName = "boolean";
 
@@ -215,28 +228,60 @@ const [Has] = createFromLoader(() => ({
 <Has>
   <></>
 </Has>;
-<Has fallback={<></>} />;
-<Has fallback={<></>}>
+<Has a />;
+<Has a>
   <></>
 </Has>;
-<Has unknown />;
-<Has unknown>
-  <></>
-</Has>;
-<Has unknown fallback={<></>} />;
-<Has unknown fallback={<></>}>
+<Has x />;
+<Has x>
   <></>
 </Has>;
 
-type ObjectWithKnownKeys = { x: boolean };
+const [Has2] = createFromLoader(() => toBooleanValues(array3));
+
+<Has2 />;
+<Has2>
+  <></>
+</Has2>;
+<Has2 a />;
+<Has2 a>
+  <></>
+</Has2>;
+<Has2 x />;
+<Has2 x>
+  <></>
+</Has2>;
+
+const [Has3] = createFromLoader(() => toBooleanValues(array3Const));
+
+<Has3 />;
+<Has3>
+  <></>
+</Has3>;
+<Has3 a />;
+<Has3 a>
+  <></>
+</Has3>;
+<Has3
+  // @ts-expect-error
+  x
+/>;
+<Has3
+  // @ts-expect-error
+  x
+>
+  <></>
+</Has3>;
+
+type ObjectWithKnownKeys = { a: boolean };
 type ObjectWithUnknownKeys = { [x: string]: boolean };
-
-function test<T>(x: T) {
-  return x;
-}
+type RecordWithKnownKeys = Record<"a", boolean>;
+type RecordWithUnknownKeys = Record<string, boolean>;
 
 test<HasUnknownKeys<ObjectWithKnownKeys>>(false);
 test<HasUnknownKeys<ObjectWithUnknownKeys>>(true);
+test<HasUnknownKeys<RecordWithKnownKeys>>(false);
+test<HasUnknownKeys<RecordWithUnknownKeys>>(true);
 
 type Props = {
   [key: string]: boolean;
@@ -244,6 +289,7 @@ type Props = {
   children: //
   ReactNode;
 };
+
 // @ts-expect-error
 const props: Props = {
   x: true,
