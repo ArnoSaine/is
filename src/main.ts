@@ -141,22 +141,33 @@ export function createFromLoader<V extends Values>(
   defaultConditions?: Conditions<V>,
   options: LoaderOptions = {}
 ) {
-  const { prop = "__is" } = options;
+  const { prop = "__is_values" } = options;
 
   // The hook and the component get values from the root loader
   const useValues = () => {
     const root = useMatches()[0];
     const { routeId = root?.id ?? "root" } = options;
 
-    return (useRouteLoaderData(routeId) as any)?.[prop] ?? {};
+    const routeLoaderData = useRouteLoaderData(routeId);
+
+    return (
+      // Deprecated
+      routeLoaderData?.__is ??
+      //
+      routeLoaderData?.[prop] ??
+      {}
+    );
   };
 
   const { Is, useIs, is } = __create(useValues, defaultConditions, options);
 
   async function loadIs(args: DataFunctionArgs) {
-    const __values = await loadValues(args as any);
+    const values = await loadValues(args as any);
 
-    return Object.assign(is(__values), { __values });
+    return Object.assign(is(values), {
+      __values: values, // Deprecated
+      [prop]: values,
+    });
   }
 
   return [Is, useIs, loadIs] as const;

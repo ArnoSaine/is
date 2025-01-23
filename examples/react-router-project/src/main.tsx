@@ -19,7 +19,7 @@ const router = createBrowserRouter(
         const is = await loadIs(args);
 
         return {
-          __is: is.__values,
+          ...is,
         };
       },
       element: (

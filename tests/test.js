@@ -1,4 +1,4 @@
-import { create, toBooleanValues } from "@arnosaine/is";
+import { create, createFromLoader, toBooleanValues } from "@arnosaine/is";
 import { strict as assert } from "node:assert";
 import test from "node:test";
 
@@ -109,4 +109,24 @@ test(() => {
     b: true,
     c: true,
   });
+});
+
+const [, , loadIs] = createFromLoader(() => values);
+
+test(async () => {
+  const is = await loadIs();
+
+  assert.equal(typeof is, "function");
+  assert(is({ string: "a" }));
+
+  assert.deepEqual(is.__values.string, "a"); // Deprecated
+  assert.deepEqual(is.__is_values.string, "a");
+
+  const loaderData = {
+    ...is,
+    x: 1,
+  };
+
+  assert.deepEqual(loaderData.__is_values.string, "a");
+  assert.deepEqual(loaderData.x, 1);
 });

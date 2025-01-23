@@ -544,7 +544,7 @@ const canUpdateArticles = useCanUpdateArticles();
 
    `./app/root.tsx`:
 
-2. Return `is.__values` as `__is` from the root `loader` / `clientLoader`. See [options](#parameters-1) to use other route or prop name.
+2. Return `...is` from the root `loader` / `clientLoader`. See [options](#parameters-1) to use other route.
 
    ```tsx
    import { loadIs } from "./is";
@@ -553,8 +553,8 @@ const canUpdateArticles = useCanUpdateArticles();
      const is = await loadIs(args);
 
      return {
-       __is: is.__values,
-       // ...
+       ...is,
+       // ...other loader data...
      };
    };
    ```
@@ -567,7 +567,7 @@ const canUpdateArticles = useCanUpdateArticles();
 import { loadIs } from "./is";
 
 // Or clientLoader
-export const loader = (args: LoaderFunctionArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const is = await loadIs(args);
 
   const isAuthenticated = is({ authenticated: true });
@@ -615,7 +615,7 @@ export const authenticated = async (
 ```tsx
 import { authenticated } from "./utils/auth";
 
-export const loader = (args: LoaderFunctionArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   await authenticated(args, "admin");
 
   // User is authenticated and has the role "admin".
@@ -688,8 +688,8 @@ const [IsAuthenticated, useIsAuthenticated, loadIsAuthenticated] =
 - **optional** `defaultConditions`: The default props/params for [`Is`](#is), [`useIs`](#useis) and [`is`](#is-1).
 - **optional** `options`: An options object for configuring the behavior.
   - **optional** `method` (`"every" | "some"`): Default: `"some"`. Specifies how to match array type values and conditions. Use `"some"` to require only some conditions to match the values, or `"every"` to require all conditions to match.
-  - **optional** `prop`: Default: `"__is"`. The property name in the loader's return value that provides `is.__values`.
-  - **optional** `routeId`: Default: The root route ID (`"root"` or `"0"`). The route that provides the `is.__values` from its loader. Example: `"routes/admin"`.
+  - **optional** `prop`: Default: `"__is_values"`. [`is`](#is-1) object (function) property that is expected to be returned in the root loader data.
+  - **optional** `routeId`: Default: The root route ID (`"root"` or `"0"`). The route that provides the `is.__is_values` from its loader. Example: `"routes/admin"`.
 
 #### Returns
 
@@ -773,15 +773,15 @@ export const loader = async (args: LoaderFunctionArgs) => {
 
 #### Usage
 
-In `root.tsx` you must also return `is.__values` as `__is` from the `loader` / `clientLoader`. See [options](#parameters-1) to use other route or prop name.
+In `root.tsx` you must also return `...is` from the `loader` / `clientLoader`. See [options](#parameters-1) to use other route.
 
 ```tsx
-export const loader = (args: LoaderFunctionArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const is = await loadIs(args);
 
   return {
-    __is: is.__values,
-    // ...
+    ...is,
+    // ...other loader data...
   };
 };
 ```
