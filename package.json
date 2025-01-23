@@ -46,8 +46,7 @@
     "test:watch": "concurrently \"node --test --watch\" \"tsc --project tsconfig.test.json --watch\""
   },
   "dependencies": {
-    "lodash-es": "^4.17.21",
-    "react-router": "^6.0.0 || ^7.0.0"
+    "lodash-es": "^4.17.21"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.3",
@@ -60,8 +59,9 @@
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-dom": "*"
+    "react": ">=18",
+    "react-dom": ">=18",
+    "react-router": ">=6"
   },
   "publishConfig": {
     "access": "public",

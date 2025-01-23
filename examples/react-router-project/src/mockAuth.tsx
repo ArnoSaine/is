@@ -1,6 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
-import { RouteObject } from "react-router";
-import { useFetcher } from "react-router-dom";
+import { RouteObject, useFetcher } from "react-router";
 import { Is, useIs } from "./is";
 
 interface User {

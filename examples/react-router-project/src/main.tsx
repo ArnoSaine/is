@@ -5,7 +5,7 @@ import {
   Outlet,
   RouterProvider,
   createBrowserRouter,
-} from "react-router-dom";
+} from "react-router";
 import "./index.css";
 import { loadIs } from "./is";
 import { LoginAndLogout, routes } from "./mockAuth";
