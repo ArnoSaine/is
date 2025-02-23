@@ -9,7 +9,7 @@ import {
 import "./index.css";
 import { loadIs } from "./is";
 import { LoginAndLogout, routes } from "./mockAuth";
-import { authorized } from "./utils/response";
+import { authorized } from "assert-response";
 
 const router = createBrowserRouter(
   [
@@ -30,7 +30,7 @@ const router = createBrowserRouter(
       ),
       errorElement: (
         <>
-          <h1>Oops!</h1>
+          <h1>Oops! Please log in</h1>
           <Link to="/">Home</Link>
         </>
       ),
@@ -55,7 +55,7 @@ const router = createBrowserRouter(
           },
           element: (
             <>
-              <h1>Protected</h1>
+              <h1>Hello from protected route</h1>
               <Link to="/">Home</Link>
             </>
           ),

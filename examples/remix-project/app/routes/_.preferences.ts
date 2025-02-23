@@ -1,5 +1,5 @@
 import { ClientActionFunctionArgs } from "@remix-run/react";
-import { allowed } from "utils/response";
+import { allowed } from "assert-response";
 import { loadIs } from "~/is";
 
 export const clientAction = async (args: ClientActionFunctionArgs) => {

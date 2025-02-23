@@ -581,13 +581,14 @@ export const loader = async (args: LoaderFunctionArgs) => {
 
 ### Utilities
 
-> ℹ️ See Remix example [utils/auth.ts](examples/remix-project/utils/auth.ts) and [utils/response.ts](examples/remix-project/utils/response.ts) for more examples.
+> ℹ️ See Remix example [utils/auth.ts](examples/remix-project/utils/auth.ts) and [assert-response](https://www.npmjs.com/package/assert-response) for more examples.
 
 `./app/utils/auth.tsx`:
 
 ```tsx
-import { loaderFunctionArgs } from "@remix-run/node";
-import { loadIs } from "./is";
+import { LoaderFunctionArgs } from "@remix-run/react";
+import { allowed, authorized } from "assert-response";
+import { loadIs } from "~/is";
 
 export const authenticated = async (
   args: LoaderFunctionArgs,
@@ -596,21 +597,17 @@ export const authenticated = async (
   const is = await loadIs(args);
 
   // Ensure user is authenticated
-  if (!is({ authenticated: true })) {
-    throw new Response("Unauthorized", {
-      status: 401,
-    });
-  }
+  // Throws a Response with status 401 Unauthorized if the condition is falsy
+  authorized(is({ authenticated: true }));
 
   // If the optional role parameter is available, ensure the user has
   // the required roles
-  if (!is({ role })) {
-    throw new Response("Forbidden", {
-      status: 403,
-    });
-  }
+  // Throws a Response with status 403 Forbidden if the condition is falsy
+  allowed(is({ role }));
 };
 ```
+
+#### Usage
 
 ```tsx
 import { authenticated } from "./utils/auth";

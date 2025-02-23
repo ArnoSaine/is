@@ -1,5 +1,5 @@
 import { ClientLoaderFunctionArgs } from "@remix-run/react";
-import { allowed, authorized } from "utils/response";
+import { allowed, authorized } from "assert-response";
 import { loadIs } from "~/is";
 
 export const authenticated = async (
